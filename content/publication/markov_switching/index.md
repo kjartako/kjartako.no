@@ -22,7 +22,7 @@ publication_types:
 summary: Estimates Markov-switching vector autoregressive models by combining marginal likelihood and Hamiltonian Monte Carlo.
 tags: []
 title: MCMC for Markov-switching models - Gibbs sampling vs. marginalized likelihood
-url_code:
+url_code:"https://github.com/kjartako/MS_VAR"
 url_dataset:
 url_pdf:
 url_poster:
