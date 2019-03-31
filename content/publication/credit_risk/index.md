@@ -3,7 +3,7 @@ abstract: The Basel Committee’s minimum capital requirement function for banks
 authors:
 - KK Osmundsen
 date: "2018-11-01"
-doi: "https://doi.org/10.1016/j.intfin.2018.07.001"
+doi: "10.1016/j.intfin.2018.07.001"
 featured: true
 image:
 links:
