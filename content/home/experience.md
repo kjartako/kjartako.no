@@ -24,8 +24,37 @@ date_format = "Jan 2006"
   company_url = ""
   location = "Stavanger"
   date_start = "2016-08-01"
-  date_end = "2020-07-31"
-  description = """Lorem ipsum"""
+  date_end = ""
+  description = """
+  Research areas:
+  * Bayesian inference for non-linear dynamic econometric models.
+  * Hamiltonian Monte Carlo
+  """
+  
+[[experience]]
+  title = "Research assistant"
+  company = "University of Stavanger"
+  company_url = ""
+  location = "Stavanger"
+  date_start = "2016-08-01"
+  date_end = ""
+  description = """
+  * STA100: Probability and Statistics 1
+  * STA510: Statistical modeling and simulation
+  """
+  
+[[experience]]
+  title = "Summer intern"
+  company = "SpareBank 1 SR-Bank - Credit control"
+  company_url = ""
+  location = "Stavanger"
+  date_start = "2016-06-01"
+  date_end = "2016-07-01"
+  description = """
+  Responsibilities include:
+  * Optimizing auto-generated commercial property credit risk reports
+  * Coding in SQL and VBA (Excel)
+  """
 
   [design.spacing]
   # Customize the section spacing. Order is top, right, bottom, left.
