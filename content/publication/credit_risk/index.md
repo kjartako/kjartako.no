@@ -9,6 +9,9 @@ image:
 links:
 - name: ScienceDirect
   url: https://www.sciencedirect.com/science/article/pii/S1042443117305917
+image:
+  caption: 
+  focal_point: ""  
 math: true
 projects:
 publication: In *Journal of International Financial Markets, Institutions and Money*,
