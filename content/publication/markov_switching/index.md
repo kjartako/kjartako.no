@@ -15,7 +15,7 @@ image:
 math: true
 projects:
 publication: In *Communications in Statistics - Simulation and Computation*,
-  Elsevier.
+  Taylor & Francis.
 publication_short: In *CS-SC*
 publication_types:
 - "2"
