@@ -7,8 +7,6 @@ doi: "https://doi.org/10.1016/j.intfin.2018.07.001"
 featured: true
 image:
 links:
-- name:
-  url:
 image:
   caption: 
   focal_point: ""  
