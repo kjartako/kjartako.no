@@ -16,7 +16,7 @@ publication: In *Journal of International Financial Markets, Institutions and Mo
   Elsevier.
 publication_short: In *JIFMIM*
 publication_types:
-- "1"
+- "2"
 summary: A statistical analysis that examines the consequences of basing the Basel Committee’s minimum capital requirement function for banks’ credit risk on expected shortfall, a switch that has already been set in motion for market risk regulation.
 tags: []
 title: Using expected shortfall for credit risk regulation
