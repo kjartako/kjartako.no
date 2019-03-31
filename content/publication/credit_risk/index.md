@@ -7,8 +7,8 @@ doi: "https://doi.org/10.1016/j.intfin.2018.07.001"
 featured: true
 image:
 links:
-- name: ScienceDirect
-  url: https://www.sciencedirect.com/science/article/pii/S1042443117305917
+- name:
+  url:
 image:
   caption: 
   focal_point: ""  
@@ -22,13 +22,13 @@ publication_types:
 summary: A statistical analysis that examines the consequences of basing the Basel Committee’s minimum capital requirement function for banks’ credit risk on expected shortfall, a switch that has already been set in motion for market risk regulation.
 tags: []
 title: Using expected shortfall for credit risk regulation
-url_code: '#'
-url_dataset: '#'
-url_pdf: '#'
-url_poster: '#'
+url_code:
+url_dataset:
+url_pdf:
+url_poster:
 url_preprint: 
 url_project: ""
-url_slides: '#'
-url_source: '#'
-url_video: '#'
+url_slides:
+url_source:
+url_video:
 ---
