@@ -1,7 +1,7 @@
 ---
 authors:
 - admin
-bio: My research interests include distributed robotics, mobile computing and programmable
+bio: Lorem ipsum
   matter.
 education:
   courses:
@@ -13,9 +13,9 @@ education:
     year: 2016
 email: ""
 interests:
-- Artificial Intelligence
-- Computational Linguistics
-- Information Retrieval
+- Lorem ipsum
+- Lorem ipsum
+- Lorem ipsum
 name: Kjartan Kloster Osmundsen
 organizations:
 - name: University of Stavanger
