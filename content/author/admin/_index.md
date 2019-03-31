@@ -8,14 +8,15 @@ education:
   - course: PhD in Statistics
     institution: University of Stavanger
     year: 2020
-  - course: MSc in Physics and Mathematics - industrial Mathematics
+  - course: MSc in Physics and Mathematics - Industrial Mathematics
     institution: Norwegian University of Science and Technology
     year: 2016
 email: ""
 interests:
-- Lorem ipsum
-- Lorem ipsum
-- Lorem ipsum
+- Computational statistics
+- Bayesian inference
+- Latent variable models
+- Econometrics
 name: Kjartan Kloster Osmundsen
 organizations:
 - name: University of Stavanger
