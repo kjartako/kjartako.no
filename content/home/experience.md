@@ -27,6 +27,7 @@ date_format = "Jan 2006"
   date_end = ""
   description = """
   Research areas:
+  
   * Bayesian inference for non-linear dynamic econometric models.
   * Hamiltonian Monte Carlo
   """
@@ -39,6 +40,7 @@ date_format = "Jan 2006"
   date_start = "2016-08-01"
   date_end = ""
   description = """
+  
   * STA100: Probability and Statistics 1
   * STA510: Statistical modeling and simulation
   """
@@ -52,6 +54,7 @@ date_format = "Jan 2006"
   date_end = "2016-07-01"
   description = """
   Responsibilities include:
+  
   * Optimizing auto-generated commercial property credit risk reports
   * Coding in SQL and VBA (Excel)
   """
