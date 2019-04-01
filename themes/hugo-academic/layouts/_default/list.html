@@ -22,7 +22,7 @@
       {{ if .Params.summary }}
       {{ .Params.summary | plainify | emojify }}
       {{ else if .Params.abstract }}
-      {{ .Params.abstract | plainify | emojify | truncate 250 }}
+      {{ .Params.abstract | plainify | emojify | truncate 300 }}
       {{ else if .Summary }}
       {{ .Summary | plainify | emojify }}
       {{ end }}
