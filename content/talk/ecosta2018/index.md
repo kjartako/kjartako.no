@@ -15,11 +15,13 @@ math: true
 projects:
 publishDate:
 slides: 
-summary: Contributed talk in the session "EC296 - Contributions in computational and numerical methods"
+summary: The 2nd International Conference on Econometrics and Statistics (EcoSta 2018)
 tags: []
 title: Pseudo-Marginal Hamiltonian Monte Carlo with Efficient Importance Sampling
 url_code: ""
 url_pdf: ""
-url_slides: "ecosta2018_slides"
+url_slides: "talk/ecosta2018/slides"
 url_video: ""
 ---
+
+Contributed talk in the session "EC296 - Contributions in computational and numerical methods"
