@@ -20,7 +20,7 @@ tags: []
 title: Pseudo-Marginal Hamiltonian Monte Carlo with Efficient Importance Sampling
 url_code: ""
 url_pdf: ""
-url_slides: "talk/ecosta2018/slides"
+url_slides: "talk/ecosta2018/slides.pdf"
 url_video: ""
 ---
 
