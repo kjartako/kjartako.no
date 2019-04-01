@@ -50,8 +50,8 @@ date_format = "Jan 2006"
   company = "SpareBank 1 SR-Bank - Credit control"
   company_url = ""
   location = "Stavanger"
-  date_start = "2016-06-01"
-  date_end = "2016-07-01"
+  date_start = "2014-06-01"
+  date_end = "2014-07-01"
   description = """
   Responsibilities include:
   
