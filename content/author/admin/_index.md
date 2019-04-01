@@ -1,8 +1,7 @@
 ---
 authors:
 - admin
-bio: Lorem ipsum
-  matter.
+bio:
 education:
   courses:
   - course: PhD in Statistics
