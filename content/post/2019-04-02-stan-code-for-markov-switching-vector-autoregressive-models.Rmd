@@ -81,7 +81,7 @@ for (i in 2:n)
   Y[i,] =mvrnorm(n=1,mu=(1-S[i])*(mu+phi%*%Y[i-1,])+S[i]*(mu2+phi2%*%Y[i-1,]),Sigma=(sigma*(1-S[i])+sigma2*S[i]))
 }
 ########
-library(ggplot2,,quietly = TRUE)
+library(ggplot2,quietly = TRUE)
 
 plot_data = data.frame(rep(c(1:n),2),c(Y[,1],Y[,2]),c(rep("Y[,1]",n),rep("Y[,2]",n)))
 colnames(plot_data) = c("Observation","Change","Type")
@@ -110,7 +110,7 @@ rate (3-Month Treasury Bill), ranging from January 1960 to January 2018. This [d
 Y = unname(as.matrix(read.table(file='https://raw.githubusercontent.com/kjartako/MS_VAR/master/MS_VAR/Data/USmacro.txt',sep="\t")))
 n=nrow(Y)
 
-library(ggplot2)
+library(ggplot2,quietly = TRUE)
 
 plot_data = data.frame(rep(c(1:n),3),c(Y[,1],Y[,2],Y[,3]),c(rep("Interest rate",n),rep("Unemployment rate",n),rep("Inflation rate",n)))
 colnames(plot_data) = c("Observation","Change","Type")
