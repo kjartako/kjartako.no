@@ -20,7 +20,7 @@ name: Kjartan Kloster Osmundsen
 organizations:
 - name: University of Stavanger
   url: "https://www.uis.no/article.php?articleID=108209&categoryID=11198"
-role: PhD Candidate in Statistics
+role: PhD Student in Statistics
 social:
 - icon: linkedin
   icon_pack: fab
