@@ -47,5 +47,5 @@ user_groups:
 - Visitors
 ---
 
-Lorem ipsum.
+I am a PhD student in statistics at the [University of Stavanger](https://www.uis.no/?lang=en_GB). My current research is mainly focused on latent variable models, using various MCMC techniques for Bayesian inference. Most of my time is spent in [Rstudio](https://www.rstudio.com/), coding in [R]( https://www.r-project.org/), C++([Rcpp](http://www.rcpp.org/)) and [Stan](https://mc-stan.org/users/interfaces/rstan).
  
