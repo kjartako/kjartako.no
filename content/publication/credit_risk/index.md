@@ -9,7 +9,7 @@ image:
 links:
 image:
   caption: 
-  focal_point: ""  
+  focal_point: "Bottom"  
 math: true
 projects:
 publication: In *Journal of International Financial Markets, Institutions and Money*,
