@@ -1,19 +1,25 @@
 +++
-  
-# A Skills section created with the Featurette widget.
-widget = "featurette"  # See https://sourcethemes.com/academic/docs/page-builder/
-headless = false  # This file represents a page section.
-active = true  # Activate this widget? true/false
-weight = 30  # Order that this section will appear.
+# Feature/Skill widget.
+widget = "featurette"  # Do not modify this line!
+date = 2017-09-20T00:00:00
+
+# Activate this widget? true/false
+active = true
 
 title = ""
 subtitle = ""
+
+# Order that this section will appear in.
+weight = 8
 
 # Showcase personal skills or business features.
 # 
 # Add/remove as many `[[feature]]` blocks below as you like.
 # 
-# For available icons, see: https://sourcethemes.com/academic/docs/widgets/#icons
+# Available icon packs and icons:
+# * fas - Font Awesome standard icons (see https://fontawesome.com/icons)
+# * fab - Font Awesome brand icons (see https://fontawesome.com/icons)
+# * ai - academic icons (see https://jpswalsh.github.io/academicons/)
 
 [[feature]]
   icon = "r-project"
@@ -32,9 +38,12 @@ subtitle = ""
   icon_pack = "fas"
   name = "Golf"
   description = "80%"  
-  
-  [design.spacing]
-  # Customize the section spacing. Order is top, right, bottom, left.
-  padding = ["0", "0", "0", "0"]
 
+[design.spacing]
+# Customize the section spacing. Order is top, right, bottom, left.
+padding = ["0", "0", "0", "0"]
+
+  
 +++
+
+

@@ -1,17 +1,37 @@
 +++
-# About widget.
-widget = "about"  # See https://sourcethemes.com/academic/docs/page-builder/
-headless = true  # This file represents a page section.
-active = true  # Activate this widget? true/false
-weight = 15  # Order that this section will appear in.
+# About/Biography widget.
+widget = "about"
+active = true
+date = 2016-04-20T00:00:00
 
-title = "Biography"
+# Order that this section will appear in.
+weight = 5
 
-# Choose the user profile to display
-# This should be the username of a profile in your `content/author/` folder.
-author = "admin"
+# List your academic interests.
+[interests]
+  interests = [
+	"Computational statistics",
+	"Bayesian inference",
+	"Latent variable models",
+	"Econometrics"
+  ]
 
-  [design.spacing]
+# List your qualifications (such as academic degrees).
+[[education.courses]]
+  course = "PhD in Statistics"
+  institution = "University of Stavanger"
+  year = 2020
+
+[[education.courses]]
+  course = "MSc in Physics and Mathematics - Industrial Mathematics"
+  institution = "Norwegian University of Science and Technology"
+  year = 2016
+ 
+[design.spacing]
   # Customize the section spacing. Order is top, right, bottom, left.
-  padding = ["40px", "0", "0", "0"]
+  padding = ["40px", "0", "0", "0"] 
 +++
+
+# Biography
+
+I am a PhD student in statistics at the [University of Stavanger](https://www.uis.no/?lang=en_GB). My current research is mainly focused on latent variable models, using various MCMC techniques for Bayesian inference. Most of my time is spent in [Rstudio](https://www.rstudio.com/), coding in [R]( https://www.r-project.org/), C++([Rcpp](http://www.rcpp.org/)) and [Stan](https://mc-stan.org/users/interfaces/rstan).

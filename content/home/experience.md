@@ -1,16 +1,17 @@
 +++
 # Experience widget.
-widget = "experience"  # See https://sourcethemes.com/academic/docs/page-builder/
-headless = true  # This file represents a page section.
+widget = "experience"  # Do not modify this line!
 active = true  # Activate this widget? true/false
-weight = 20  # Order that this section will appear.
 
 title = "Experience"
 subtitle = ""
 
+# Order that this section will appear in.
+weight = 7
+
 # Date format for experience
 #   Refer to https://sourcethemes.com/academic/docs/customization/#date-format
-date_format = "Jan 2006"
+date_format = "January 2006"
 
 # Experiences.
 #   Add/remove as many `[[experience]]` blocks below as you like.
@@ -62,5 +63,5 @@ date_format = "Jan 2006"
   [design.spacing]
   # Customize the section spacing. Order is top, right, bottom, left.
   padding = ["30px", "0", "0", "0"]  
-  
+
 +++
