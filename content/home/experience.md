@@ -20,7 +20,7 @@ date_format = "January 2006"
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 
 [[experience]]
-  title = "PhD Candidate"
+  title = "PhD Student"
   company = "University of Stavanger"
   company_url = ""
   location = "Stavanger"
@@ -59,9 +59,5 @@ date_format = "January 2006"
   * Optimizing auto-generated commercial property credit risk reports
   * Coding in SQL and VBA (Excel)
   """
-
-  [design.spacing]
-  # Customize the section spacing. Order is top, right, bottom, left.
-  padding = ["30px", "0", "0", "0"]  
 
 +++

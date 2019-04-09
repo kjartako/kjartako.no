@@ -1,6 +1,6 @@
 +++
 title = "Pseudo-Marginal Hamiltonian Monte Carlo with Efficient Importance Sampling"
-date = 
+date = 2018-06-20
 draft = false
 
 # Talk start and end times.
