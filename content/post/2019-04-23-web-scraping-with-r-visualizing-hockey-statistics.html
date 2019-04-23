@@ -1,0 +1,99 @@
+---
+title: 'Web scraping with R: Visualizing hockey statistics'
+author: "Kjartan Kloster Osmundsen"
+date: '2019-04-23'
+image:
+  caption: ''
+  focal_point: ''
+slug: web-scraping-with-r-visualizing-hockey-statistics
+tags: []
+categories:
+- R
+- Hockey
+---
+
+
+
+<p>I wanted to visualize the personal statistics for the hockey players of <a href="https://oilers.no">Stavanger Oilers</a>, for the 2018/2019 season.</p>
+<p>The data material is scraped from both <a href="https://www.eliteprospects.com/team/845/stavanger-oilers/2018-2019?tab=stats">Elite Prospects</a> and Hockey live (<a href="https://www.hockey.no/live/Statistics/Players?date=22.04.2019&amp;tournamentid=381196&amp;teamid=220882">regular season</a> and <a href="https://www.hockey.no/live/Statistics/Players?date=22.04.2019&amp;tournamentid=381197&amp;teamid=220882">playoffs</a>), using the R-package <a href="https://cran.r-project.org/web/packages/rvest/rvest.pdf">rvest</a>, as described in this <a href="https://www.r-bloggers.com/rvest-easy-web-scraping-with-r/">blog post</a>.</p>
+<div id="the-code" class="section level1">
+<h1>The code</h1>
+<p>Scraping the data from Elite Prospects was straightforward, as it is stored as an HTML table. When you want to scrape a table with rvest, you only need to specify an index integer. Found by trial and error that the desired table was the second table of the web page, and removed some empty rows (which the web page uses for spacing):</p>
+<pre class="r"><code>library(rvest)
+EP = read_html(&quot;https://www.eliteprospects.com/team/845/stavanger-oilers/2018-2019?tab=stats&quot;)
+EPdat=EP%&gt;%html_nodes(&quot;table&quot;)%&gt;%.[[2]]%&gt;%html_table()
+EPstats = EPdat[!is.na(EPdat[,1]),]</code></pre>
+<p>However, the data tables at Hockey Live are populated with javascript, which prevents directly using the above method. I followed this <a href="https://www.datacamp.com/community/tutorials/scraping-javascript-generated-data-with-r">tutorial</a>, which suggests using <a href="%22https://http://phantomjs.org/%22">PhantomJS</a> to fetch the HTML page after the underlying javascript code has done its work. The rvest-method can then be applied to the resulting HTML page:</p>
+<pre class="r"><code># assuming phantomjs.exe and season_scrape.js is placed in the working folder
+system(&quot;./phantomjs season_scrape.js&quot;)
+season_dat = read_html(&quot;season.html&quot;,encoding =&quot;UTF-8&quot;)
+season=season_dat%&gt;%html_nodes(&quot;table&quot;)%&gt;%.[[1]]%&gt;%html_table()</code></pre>
+<pre class="js"><code># season_scrape.js
+var webPage = require(&#39;webpage&#39;);
+var page = webPage.create();
+var fs = require(&#39;fs&#39;);
+
+page.open(&#39;https://www.hockey.no/live/Statistics/Players?date=21.04.2019&amp;tournamentid=381196&amp;teamid=220882&#39;, function (status) {
+  fs.write(&#39;season.html&#39;,page.content,&#39;w&#39;)
+  phantom.exit();
+});</code></pre>
+<p>Then, I combine the data from the two different sources, by merging the respective data frames. Unfortunately, the sources are not using identical player names, so some string handling is required to extract the last surname, which is then used as the merging column:</p>
+<pre class="r"><code>for(i in 1:nrow(season))
+{
+  tmp=strsplit(season$PLAYER[i], &quot;,&quot;)[[1]]
+  season$PLAYER[i]=tmp[1]
+}
+
+names=setNames(data.frame(matrix(ncol = 3, nrow = nrow(EPstats))), c(&quot;NAME&quot;, &quot;POSITION&quot;, &quot;PLAYER&quot;))
+
+for(j in 1:nrow(EPstats))
+{
+  tmp=strsplit(EPstats$Player[j], &quot;\\s+&quot;)[[1]]
+  names$NAME[j]=paste((tmp[-length(tmp)]),collapse = &quot; &quot;)
+  names$POSITION[j]=tmp[length(tmp)]
+  # Replaces special characters
+  names$PLAYER[j]=chartr(paste(names(special_chars), collapse=&#39;&#39;),paste(special_chars, collapse=&#39;&#39;),tmp[length(tmp)-1])
+}
+season = merge(season,names)</code></pre>
+<p>To ensure the merging column is identical for each data source, accented characters in are replaced with their non-accented counterparts, using a method I found on <a href="https://stackoverflow.com/questions/20495598/replace-accented-characters-in-r-with-non-accented-counterpart-utf-8-encoding">stackoverflow</a>.</p>
+<p><details> <summary> Special characters</summary></p>
+<pre class="r"><code>special_chars = list(&#39;S&#39;=&#39;S&#39;, &#39;s&#39;=&#39;s&#39;, &#39;Z&#39;=&#39;Z&#39;, &#39;z&#39;=&#39;z&#39;, &#39;À&#39;=&#39;A&#39;, &#39;Á&#39;=&#39;A&#39;, &#39;Â&#39;=&#39;A&#39;, &#39;Ã&#39;=&#39;A&#39;, &#39;Ä&#39;=&#39;A&#39;, &#39;Å&#39;=&#39;A&#39;, &#39;Æ&#39;=&#39;A&#39;, &#39;Ç&#39;=&#39;C&#39;, &#39;È&#39;=&#39;E&#39;, &#39;É&#39;=&#39;E&#39;,
+                          &#39;Ê&#39;=&#39;E&#39;, &#39;Ë&#39;=&#39;E&#39;, &#39;Ì&#39;=&#39;I&#39;, &#39;Í&#39;=&#39;I&#39;, &#39;Î&#39;=&#39;I&#39;, &#39;Ï&#39;=&#39;I&#39;, &#39;Ñ&#39;=&#39;N&#39;, &#39;Ò&#39;=&#39;O&#39;, &#39;Ó&#39;=&#39;O&#39;, &#39;Ô&#39;=&#39;O&#39;, &#39;Õ&#39;=&#39;O&#39;, &#39;Ö&#39;=&#39;O&#39;, &#39;Ø&#39;=&#39;O&#39;, &#39;Ù&#39;=&#39;U&#39;,
+                          &#39;Ú&#39;=&#39;U&#39;, &#39;Û&#39;=&#39;U&#39;, &#39;Ü&#39;=&#39;U&#39;, &#39;Ý&#39;=&#39;Y&#39;, &#39;Þ&#39;=&#39;B&#39;, &#39;ß&#39;=&#39;Ss&#39;, &#39;à&#39;=&#39;a&#39;, &#39;á&#39;=&#39;a&#39;, &#39;â&#39;=&#39;a&#39;, &#39;ã&#39;=&#39;a&#39;, &#39;ä&#39;=&#39;a&#39;, &#39;å&#39;=&#39;a&#39;, &#39;æ&#39;=&#39;a&#39;, &#39;ç&#39;=&#39;c&#39;,
+                          &#39;è&#39;=&#39;e&#39;, &#39;é&#39;=&#39;e&#39;, &#39;ê&#39;=&#39;e&#39;, &#39;ë&#39;=&#39;e&#39;, &#39;ì&#39;=&#39;i&#39;, &#39;í&#39;=&#39;i&#39;, &#39;î&#39;=&#39;i&#39;, &#39;ï&#39;=&#39;i&#39;, &#39;ð&#39;=&#39;o&#39;, &#39;ñ&#39;=&#39;n&#39;, &#39;ò&#39;=&#39;o&#39;, &#39;ó&#39;=&#39;o&#39;, &#39;ô&#39;=&#39;o&#39;, &#39;õ&#39;=&#39;o&#39;,
+                          &#39;ö&#39;=&#39;o&#39;, &#39;ø&#39;=&#39;o&#39;, &#39;ù&#39;=&#39;u&#39;, &#39;ú&#39;=&#39;u&#39;, &#39;û&#39;=&#39;u&#39;, &#39;ý&#39;=&#39;y&#39;, &#39;ý&#39;=&#39;y&#39;, &#39;þ&#39;=&#39;b&#39;, &#39;ÿ&#39;=&#39;y&#39; )</code></pre>
+<p></details></p>
+<p>The above code is for the regular season statistics, and the same method is also applied for the playoffs statistics. For some of the visualizations, I merge the regular season and playoffs data.</p>
+<p>The figures are created with <a href="https://cran.r-project.org/web/packages/ggplot2/index.html">ggplot2</a>, and the code are fairly similar for all figures.</p>
+<p><details> <summary> Code used for generating the first figure</summary></p>
+<pre class="r"><code>library(ggplot2)
+
+season$col &lt;- cut(
+  season$PTS/season$GP, 
+  breaks=c(0, 0.25, 0.5, 0.75, 1, Inf)
+)
+
+ggplot(season[season$GP&gt;10,],aes(x=PTS/GP,y=reorder(NAME,PTS/GP),fill=col))+
+  geom_segment(aes(yend=NAME,x=G/GP,xend=0),colour=&quot;black&quot;,size=1.5)+
+  geom_segment(aes(yend=NAME,x=PTS/GP,xend=G/GP),colour=&quot;grey50&quot;,size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab(&quot;&quot;)+xlab(&quot;Total points per game (goals in black), regular season&quot;)+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(season$PTS/season$GP)*1.1),breaks=c(0, 0.25, 0.5, 0.75, 1))+
+  theme(panel.grid.minor.x = element_blank(),panel.grid.major.y = element_blank(),
+        legend.position = &quot;none&quot;,axis.text=element_text(size=14),axis.title=element_text(size=14,face=&quot;bold&quot;))+
+  scale_fill_brewer(&quot;&quot;, palette = &quot;Blues&quot;)</code></pre>
+<p></details></p>
+</div>
+<div id="the-results" class="section level1">
+<h1>The results</h1>
+<p><img src="/post/2019-04-23-web-scraping-with-r-visualizing-hockey-statistics_files/figure-html/fig1-1.png" width="960" /></p>
+<p><br/> <br/></p>
+<p><img src="/post/2019-04-23-web-scraping-with-r-visualizing-hockey-statistics_files/figure-html/fig2-1.png" width="960" /></p>
+<p><br/> <br/></p>
+<p><img src="/post/2019-04-23-web-scraping-with-r-visualizing-hockey-statistics_files/figure-html/fig3-1.png" width="960" /></p>
+<p><br/> <br/></p>
+<p><img src="/post/2019-04-23-web-scraping-with-r-visualizing-hockey-statistics_files/figure-html/fig4-1.png" width="960" /></p>
+<p><br/> <br/></p>
+<p><img src="/post/2019-04-23-web-scraping-with-r-visualizing-hockey-statistics_files/figure-html/fig5-1.png" width="960" /></p>
+<p><br/> <br/></p>
+<p><img src="/post/2019-04-23-web-scraping-with-r-visualizing-hockey-statistics_files/figure-html/fig6-1.png" width="960" /></p>
+</div>

@@ -1,0 +1,307 @@
+---
+title: 'Web scraping with R: Visualizing hockey statistics'
+author: "Kjartan Kloster Osmundsen"
+date: '2019-04-23'
+image:
+  caption: ''
+  focal_point: ''
+slug: web-scraping-with-r-visualizing-hockey-statistics
+tags: []
+categories:
+- R
+- Hockey
+---
+
+I wanted to visualize the personal statistics for the hockey players of [Stavanger Oilers](https://oilers.no), for the 2018/2019 season.
+
+The data material is scraped from both [Elite Prospects](https://www.eliteprospects.com/team/845/stavanger-oilers/2018-2019?tab=stats) and Hockey live ([regular season](https://www.hockey.no/live/Statistics/Players?date=22.04.2019&tournamentid=381196&teamid=220882) and [playoffs](https://www.hockey.no/live/Statistics/Players?date=22.04.2019&tournamentid=381197&teamid=220882)), using the R-package [rvest](https://cran.r-project.org/web/packages/rvest/rvest.pdf), as described in this [blog post](https://www.r-bloggers.com/rvest-easy-web-scraping-with-r/).
+
+
+
+# The code
+
+Scraping the data from Elite Prospects was straightforward, as it is stored as an HTML table. When you want to scrape a table with rvest, you only need to specify an index integer. Found by trial and error that the desired table was the second table of the web page, and removed some empty rows (which the web page uses for spacing): 
+
+```{r a,eval=FALSE}
+library(rvest)
+EP = read_html("https://www.eliteprospects.com/team/845/stavanger-oilers/2018-2019?tab=stats")
+EPdat=EP%>%html_nodes("table")%>%.[[2]]%>%html_table()
+EPstats = EPdat[!is.na(EPdat[,1]),]
+```
+
+However, the data tables at Hockey Live are populated with javascript, which prevents directly using the above method. I followed this [tutorial](https://www.datacamp.com/community/tutorials/scraping-javascript-generated-data-with-r), which suggests using [PhantomJS]("https://http://phantomjs.org/") to fetch the HTML page after the underlying javascript code has done its work. The rvest-method can then be applied to the resulting HTML page:  
+
+```{r b,eval=FALSE}
+# assuming phantomjs.exe and season_scrape.js is placed in the working folder
+system("./phantomjs season_scrape.js")
+season_dat = read_html("season.html",encoding ="UTF-8")
+season=season_dat%>%html_nodes("table")%>%.[[1]]%>%html_table()
+```
+
+```{js, eval=FALSE}
+# season_scrape.js
+var webPage = require('webpage');
+var page = webPage.create();
+var fs = require('fs');
+
+page.open('https://www.hockey.no/live/Statistics/Players?date=21.04.2019&tournamentid=381196&teamid=220882', function (status) {
+  fs.write('season.html',page.content,'w')
+  phantom.exit();
+});
+```
+
+Then, I combine the data from the two different sources, by merging the respective data frames. Unfortunately, the sources are not using identical player names, so some string handling is required to extract the last surname, which is then used as the merging column:
+
+```{r c, eval=FALSE}
+for(i in 1:nrow(season))
+{
+  tmp=strsplit(season$PLAYER[i], ",")[[1]]
+  season$PLAYER[i]=tmp[1]
+}
+
+names=setNames(data.frame(matrix(ncol = 3, nrow = nrow(EPstats))), c("NAME", "POSITION", "PLAYER"))
+
+for(j in 1:nrow(EPstats))
+{
+  tmp=strsplit(EPstats$Player[j], "\\s+")[[1]]
+  names$NAME[j]=paste((tmp[-length(tmp)]),collapse = " ")
+  names$POSITION[j]=tmp[length(tmp)]
+  # Replaces special characters
+  names$PLAYER[j]=chartr(paste(names(special_chars), collapse=''),paste(special_chars, collapse=''),tmp[length(tmp)-1])
+}
+season = merge(season,names)
+```
+
+To ensure the merging column is identical for each data source, accented characters in are replaced with their non-accented counterparts, using a method I found on [stackoverflow](https://stackoverflow.com/questions/20495598/replace-accented-characters-in-r-with-non-accented-counterpart-utf-8-encoding).
+
+<details> <summary> Special characters</summary>
+```{r d, eval=FALSE}
+special_chars = list('S'='S', 's'='s', 'Z'='Z', 'z'='z', 'À'='A', 'Á'='A', 'Â'='A', 'Ã'='A', 'Ä'='A', 'Å'='A', 'Æ'='A', 'Ç'='C', 'È'='E', 'É'='E',
+                          'Ê'='E', 'Ë'='E', 'Ì'='I', 'Í'='I', 'Î'='I', 'Ï'='I', 'Ñ'='N', 'Ò'='O', 'Ó'='O', 'Ô'='O', 'Õ'='O', 'Ö'='O', 'Ø'='O', 'Ù'='U',
+                          'Ú'='U', 'Û'='U', 'Ü'='U', 'Ý'='Y', 'Þ'='B', 'ß'='Ss', 'à'='a', 'á'='a', 'â'='a', 'ã'='a', 'ä'='a', 'å'='a', 'æ'='a', 'ç'='c',
+                          'è'='e', 'é'='e', 'ê'='e', 'ë'='e', 'ì'='i', 'í'='i', 'î'='i', 'ï'='i', 'ð'='o', 'ñ'='n', 'ò'='o', 'ó'='o', 'ô'='o', 'õ'='o',
+                          'ö'='o', 'ø'='o', 'ù'='u', 'ú'='u', 'û'='u', 'ý'='y', 'ý'='y', 'þ'='b', 'ÿ'='y' )
+```
+</details>
+
+The above code is for the regular season statistics, and the same method is also applied for the playoffs statistics. For some of the visualizations, I merge the regular season and playoffs data.
+
+The figures are created with [ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html), and the code are fairly similar for all figures.
+
+<details> <summary> Code used for generating the first figure</summary>
+```{r e, eval=FALSE}
+library(ggplot2)
+
+season$col <- cut(
+  season$PTS/season$GP, 
+  breaks=c(0, 0.25, 0.5, 0.75, 1, Inf)
+)
+
+ggplot(season[season$GP>10,],aes(x=PTS/GP,y=reorder(NAME,PTS/GP),fill=col))+
+  geom_segment(aes(yend=NAME,x=G/GP,xend=0),colour="black",size=1.5)+
+  geom_segment(aes(yend=NAME,x=PTS/GP,xend=G/GP),colour="grey50",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Total points per game (goals in black), regular season")+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(season$PTS/season$GP)*1.1),breaks=c(0, 0.25, 0.5, 0.75, 1))+
+  theme(panel.grid.minor.x = element_blank(),panel.grid.major.y = element_blank(),
+        legend.position = "none",axis.text=element_text(size=14),axis.title=element_text(size=14,face="bold"))+
+  scale_fill_brewer("", palette = "Blues")
+```
+</details>
+
+# The results
+
+```{r f,include=FALSE}
+library(rvest)
+library(ggplot2)
+
+special_chars = list('S'='S', 's'='s', 'Z'='Z', 'z'='z', 'À'='A', 'Á'='A', 'Â'='A', 'Ã'='A', 'Ä'='A', 'Å'='A', 'Æ'='A', 'Ç'='C', 'È'='E', 'É'='E',
+                          'Ê'='E', 'Ë'='E', 'Ì'='I', 'Í'='I', 'Î'='I', 'Ï'='I', 'Ñ'='N', 'Ò'='O', 'Ó'='O', 'Ô'='O', 'Õ'='O', 'Ö'='O', 'Ø'='O', 'Ù'='U',
+                          'Ú'='U', 'Û'='U', 'Ü'='U', 'Ý'='Y', 'Þ'='B', 'ß'='Ss', 'à'='a', 'á'='a', 'â'='a', 'ã'='a', 'ä'='a', 'å'='a', 'æ'='a', 'ç'='c',
+                          'è'='e', 'é'='e', 'ê'='e', 'ë'='e', 'ì'='i', 'í'='i', 'î'='i', 'ï'='i', 'ð'='o', 'ñ'='n', 'ò'='o', 'ó'='o', 'ô'='o', 'õ'='o',
+                          'ö'='o', 'ø'='o', 'ù'='u', 'ú'='u', 'û'='u', 'ý'='y', 'ý'='y', 'þ'='b', 'ÿ'='y' )
+########
+#system("./phantomjs season_scrape.js")
+season_dat = read_html("season.html",encoding ="UTF-8")
+season=season_dat%>%html_nodes("table")%>%.[[1]]%>%html_table()
+
+for(i in 1:nrow(season))
+{
+  tmp=strsplit(season$PLAYER[i], ",")[[1]]
+  season$PLAYER[i]=tmp[1]
+}
+##########
+EP = read_html("https://www.eliteprospects.com/team/845/stavanger-oilers/2018-2019?tab=stats")
+EPdat=EP%>%html_nodes("table")%>%.[[2]]%>%html_table()
+EPstats = EPdat[!is.na(EPdat[,1]),]
+
+names=setNames(data.frame(matrix(ncol = 3, nrow = nrow(EPstats))), c("NAME", "POSITION", "PLAYER"))
+
+for(j in 1:nrow(EPstats))
+{
+  tmp=strsplit(EPstats$Player[j], "\\s+")[[1]]
+  names$NAME[j]=paste((tmp[-length(tmp)]),collapse = " ")
+  names$POSITION[j]=tmp[length(tmp)]
+  # Replaces accented characters
+  names$PLAYER[j]=chartr(paste(names(special_chars), collapse=''),paste(special_chars, collapse=''),tmp[length(tmp)-1])
+}
+
+season = merge(season,names)
+###########################################################################################################
+###########################################################################################################
+###########################################################################################################
+###########################################################################################################
+
+#system("./phantomjs playoffs_scrape.js")
+playoffs_dat = read_html("playoffs.html",encoding ="UTF-8")
+playoffs=playoffs_dat%>%html_nodes("table")%>%.[[1]]%>%html_table()
+
+for(i in 1:nrow(playoffs))
+{
+  tmp=strsplit(playoffs$PLAYER[i], ",")[[1]]
+  playoffs$PLAYER[i]=tmp[1]
+}
+
+playoffs = merge(playoffs,names)
+###########################################################################################################
+###########################################################################################################
+seasontmp=data.frame(NAME=season$NAME,PIM=season$PIM,PP=season$PP,PPA=season$PPA,GWG=season$GWG)
+playoffstmp=data.frame(NAME=playoffs$NAME,PIM2=playoffs$PIM,PP2=playoffs$PP,PPA2=playoffs$PPA,GWG2=playoffs$GWG)
+allmatches=merge(seasontmp,playoffstmp)
+```
+
+```{r fig1, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+season$col <- cut(
+  season$PTS/season$GP, 
+  breaks=c(0, 0.25, 0.5, 0.75, 1, Inf)
+)
+
+ggplot(season[season$GP>10,],aes(x=PTS/GP,y=reorder(NAME,PTS/GP),fill=col))+
+  geom_segment(aes(yend=NAME,x=G/GP,xend=0),colour="black",size=1.5)+
+  geom_segment(aes(yend=NAME,x=PTS/GP,xend=G/GP),colour="grey50",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Total points per game (goals in black), regular season")+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(season$PTS/season$GP)*1.1),breaks=c(0, 0.25, 0.5, 0.75, 1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"))
+
+```
+
+<br/>
+<br/>
+
+```{r fig2, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+playoffs$col <- cut(
+  playoffs$PTS/playoffs$GP, 
+  breaks=c(0, 0.25, 0.5, 0.75, 1, Inf)
+)
+
+ggplot(playoffs[playoffs$GP>3,],aes(x=PTS/GP,y=reorder(NAME,PTS/GP),fill=col))+
+  geom_segment(aes(yend=NAME,x=G/GP,xend=0),colour="black",size=1.5)+
+  geom_segment(aes(yend=NAME,x=PTS/GP,xend=G/GP),colour="grey50",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Total points per game (goals in black), playoffs")+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(playoffs$PTS/playoffs$GP)*1.1),breaks=c(0, 0.25, 0.5, 0.75, 1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"))
+
+```
+
+<br/>
+<br/>
+
+```{r fig3, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+allmatches$col <- cut(
+  allmatches$PP+allmatches$PP2,
+  breaks=c(2, 4, 6, 10, Inf)
+)
+
+ggplot(allmatches[allmatches$PP+allmatches$PP2>1,],aes(x=PP+PP2,y=reorder(NAME,PP+PP2),fill=col))+
+  geom_segment(aes(yend=NAME,x=PP,xend=0),colour="grey50",size=1)+
+  geom_segment(aes(yend=NAME,x=PP+PP2,xend=PP),colour="red",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Powerplay goals, regular season (grey), playoffs (red)")+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(allmatches$PP+allmatches$PP2)*1.1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"))
+
+```
+
+<br/>
+<br/>
+
+```{r fig4, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+allmatches$col <- cut(
+  allmatches$PPA+allmatches$PPA2,
+  breaks=c(2, 4, 6, 10, Inf)
+)
+
+ggplot(allmatches[allmatches$PPA+allmatches$PPA2>1,],aes(x=PPA+PPA2,y=reorder(NAME,PPA+PPA2),fill=col))+
+  geom_segment(aes(yend=NAME,x=PPA,xend=0),colour="grey50",size=1)+
+  geom_segment(aes(yend=NAME,x=PPA+PPA2,xend=PPA),colour="red",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Powerplay assists, regular season (grey), playoffs (red)")+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(allmatches$PPA+allmatches$PPA2)*1.1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"))
+
+
+```
+
+<br/>
+<br/>
+
+```{r fig5, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+allmatches$col <- cut(
+  allmatches$PIM+allmatches$PIM2,
+  breaks=c(15, 50, 75, 100, Inf)
+)
+
+ggplot(allmatches[allmatches$PIM+allmatches$PIM2>15,],aes(x=PIM+PIM2,y=reorder(NAME,PIM+PIM2),fill=col))+
+  geom_segment(aes(yend=NAME,x=PIM,xend=0),colour="grey50",size=1)+
+  geom_segment(aes(yend=NAME,x=PIM+PIM2,xend=PIM),colour="red",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Penalty minutes, regular season (grey), playoffs (red)")+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(allmatches$PIM+allmatches$PIM2)*1.1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"))
+
+```
+
+<br/>
+<br/>
+
+```{r fig6, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+allmatches$col <- cut(
+  allmatches$GWG+allmatches$GWG2,
+  breaks=c(2, 3, 4, 5, Inf)
+)
+
+ggplot(allmatches[allmatches$GWG+allmatches$GWG2>1,],aes(x=GWG+GWG2,y=reorder(NAME,GWG+GWG2),fill=col))+
+  geom_segment(aes(yend=NAME,x=GWG,xend=0),colour="grey50",size=1)+
+  geom_segment(aes(yend=NAME,x=GWG+GWG2,xend=GWG),colour="red",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("GWG, regular season (grey), playoffs (red)")+
+  scale_x_continuous(expand = c(0, 0),limits = c(0,max(allmatches$GWG+allmatches$GWG2)*1.1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14,face="bold"))
+
+```
+
