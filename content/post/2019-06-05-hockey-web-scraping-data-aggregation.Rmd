@@ -1,0 +1,411 @@
+---
+title: 'Hockey web scraping: Data aggregation'
+author: Kjartan Kloster Osmundsen
+date: '2019-06-05'
+slug: hockey-web-scraping-data-aggregation
+categories:
+  - Hockey
+  - R
+tags: []
+image:
+  caption: ''
+  focal_point: ''
+---
+
+Continuing from my [previous post](https://www.kjartako.no/post/web-scraping-with-r-visualizing-hockey-statistics/), I now focus on detailed match statistics, rather than the available aggregate data. By scraping very detailed data from each match of the 2018/2019 Norwegian hockey season, my goal is to present aggregate data that are not available at the source webpage. The data material is scraped from [Hockey live](https://www.hockey.no/live?date=05.06.2019&tournamentid=381196&teamid=0&seasonid=200830). 
+
+
+# The code
+
+I started by simply downloading the main HTML file manually from the web browser. This main page cointains URL links to all 216 matches of the regular season. Scraping the HTML table is straightforward, but this gives you the URL text, not the actual URL link. I found this [tip](https://stackoverflow.com/questions/42119851/how-to-get-the-link-inside-html-table-using-rvest?rq=1), saying that an easy fix is to edit rvest's html_table-function, using the trace-function in R: 
+
+```{r a,eval=FALSE}
+library(rvest)
+match_dat = read_html("GET_18_19.html",encoding ="UTF-8")
+
+matchList=match_dat%>%html_nodes("table")%>%.[[3]]%>%html_table()
+
+trace(rvest:::html_table.xml_node, quote({ 
+  values      <- lapply(lapply(cells, html_node, "a"), html_attr, name = "href")
+  values[[1]] <- html_text(cells[[1]])
+}), at = 14)
+
+tmp=match_dat%>%html_nodes("table")%>%.[[3]]%>%html_table()
+untrace(rvest:::html_table.xml_node)
+
+matchList$Results=tmp$Results
+```
+
+The next step is simply to iterate over the URL links, adding the scraped data of each URL to a list. The actual scraping in each iteration is similar to what is done in my [previous post](https://www.kjartako.no/post/web-scraping-with-r-visualizing-hockey-statistics/). Below are the resulting aggregate data produced by iterating this list of match statistics.
+
+
+# The results
+
+```{r f,include=FALSE}
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+
+MATCHLIST=readRDS(file="matches.rds")
+
+N = length(MATCHLIST)
+
+teams=c("Frisk Asker Elite","Lillehammer Elite","Manglerud Star Elite","Ringerike","Sparta Sarp Elite",
+        "Stavanger Ishockeyklubb","Stjernen Elite","Storhamar Elite","Vålerenga Elite")
+
+teams_displaynames=c("Frisk Asker","Lillehammer","Manglerud Star","Ringerike","Sparta Sarpsborg",
+        "Stavanger Oilers","Stjernen","Storhamar","Vålerenga")
+
+n = length(teams)
+
+######################################################################################
+######################################################################################
+######################################################################################
+
+res = data.frame(Team=teams_displaynames,s1=rep(0,n),s2=rep(0,n),s3=rep(0,n),s4=rep(0,n),g1=rep(0,n),g2=rep(0,n),g3=rep(0,n),g4=rep(0,n),Gamecount=rep(0,n),OTcount=rep(0,n))
+
+for(j in 1:length(teams))
+{
+  Gamecount=0
+  OTcount=0
+  goals=rep(0,4)
+  shots=rep(0,4)
+  
+  for(i in 1:N)
+  {
+    if(is.element(teams[j],MATCHLIST[[i]]$scoring[,1]))
+    {
+      tmp=MATCHLIST[[i]]$scoring
+
+      homeaway=which(teams[j] == tmp[,1])
+      
+      if(ncol(tmp)>13)
+      {
+        goals=goals+as.numeric(tmp[homeaway,3:6])
+        tmpid=which("Shots"==colnames(tmp))
+        shots=shots+as.numeric(tmp[homeaway,(tmpid+1:4)])
+        
+        if(sum(tmp[,6:7])>0)
+        {
+          OTcount=OTcount+1
+        }
+        
+      }else
+      {
+        goals=goals+c(as.numeric(tmp[homeaway,3:5]),0)
+        shots=shots+c(as.numeric(tmp[homeaway,7:9]),0)
+      }
+      Gamecount=Gamecount+1
+    }
+  }
+  
+  res[j,2:5]=shots
+  res[j,6:9]=goals
+  res[j,10:11]=c(Gamecount,OTcount)
+}
+
+eff = round(100*(res[,6:8]/res[,2:4]),1)
+colnames(eff)=c("eff1","eff2","eff3")
+eff = melt(cbind(Team=res[,1],eff),id.vars = "Team")
+eff=cbind(eff,as.vector(as.matrix(t(apply(res[,6:8],1,cumsum))-0.5*res[,6:8])))
+colnames(eff)=c("Team","Period","eff","pos")
+
+goaldat = melt(res[,c(1,6:8)],id.vars = "Team")
+colnames(goaldat)=c("Team","Period","Goals")
+
+goaldat$Period = factor(goaldat$Period, levels = c("g3","g2","g1"))
+
+######################################################################################
+######################################################################################
+######################################################################################
+
+attendance = matrix(rep(NA,N*3),ncol=3)
+
+for(i in 1:N)
+{
+  tmp = MATCHLIST[[i]]$meta
+  attendance[i,1] = tmp[which(tmp[,1]=="Attendance"),2]
+  attendance[i,2:3] = MATCHLIST[[i]]$scoring[1:2,1]
+}
+
+meanvals=numeric(n)
+
+for(i in 1:n)
+{
+  meanvals[i]=mean(as.numeric(attendance[which(attendance[,2]==teams[i]),1]))
+}
+
+devsum=matrix(rep(NA,n*n),ncol=n)
+colnames(devsum)=teams_displaynames
+rownames(devsum)=teams_displaynames
+
+for(k in 1:n)
+{
+  for(j in (1:n)[-k])
+  {
+    devsum[k,j]=100*((mean(as.numeric(attendance[which(attendance[,2]==teams[j] & attendance[,3]==teams[k]),1]))-meanvals[j])/meanvals[j])
+  }  
+}
+
+plotdat = melt(devsum)
+names(plotdat) <- c("Away", "Home","val")
+
+#transform
+absminval = abs(min(devsum,na.rm=TRUE))
+transindex=!is.na(plotdat$val)
+plotdat$val[transindex] = log(plotdat$val[transindex]+absminval+30) 
+
+######################################################################################
+######################################################################################
+######################################################################################
+
+pendata = matrix(c("Team","HomeAway","Period","Time","Duration","Type"),ncol=6)
+
+for(j in 1:length(teams))
+{
+  Gamecount=0
+  
+  for(i in 1:N)
+  {
+    if(is.element(teams[j],MATCHLIST[[i]]$scoring[,1]))
+    {
+      tmp=MATCHLIST[[i]]$scoring
+      homeaway=which(teams[j] == tmp[,1])
+      
+      plist=list(MATCHLIST[[i]]$pen1,MATCHLIST[[i]]$pen2,MATCHLIST[[i]]$pen3)
+      
+      for(h in 1:3)
+      {
+        for(k in 1:nrow(plist[[h]]))
+        {
+          test=strsplit(plist[[h]][k,], "\r\n")[[1]]
+          
+          if(gsub("\\s", "", gsub("-", "", test[1])) == gsub("\\s", "", teams[j]))
+          {
+            test2=strsplit(test[3], ", ")[[1]]
+            
+            timetmp=as.numeric(gsub(":", "", test2[3]))+(h-1)*2000
+            pentime=round((timetmp %/% 100)+((timetmp %% 100)/60),2)
+            pendur=test2[2]
+            pentype=gsub("[\\(\\)]", "", regmatches(test2[1], gregexpr("\\(.*?\\)", test2[1]))[[1]])
+            
+            pendata=rbind(pendata,c(teams[j],homeaway,h,pentime,pendur,pentype))
+          }
+        }
+      }
+
+      Gamecount=Gamecount+1
+    }
+  }
+  
+  print(Gamecount)
+}
+
+res=data.frame(Team=pendata[-1,1],Homeaway=as.numeric(pendata[-1,2]),Period=as.numeric(pendata[-1,3]),Time=as.numeric(pendata[-1,4]),Duration=pendata[-1,5],Type=pendata[-1,6])
+res2min=res[res$Duration=="2 min",]
+pentab=as.data.frame(sort(table(res2min$Type),decreasing = TRUE))[1:8,]
+colnames(pentab)=c("Type","Count")
+###
+tmpres=res2min[is.element(res2min$Type,pentab$Type),]
+pendat=as.data.frame(table(tmpres$Team,droplevels(tmpres$Type)))
+colnames(pendat)=c("Team","Type","Count")
+
+pendat$Type = factor(pendat$Type, levels = rev(unique(pendat$Type)))
+####
+hometab=as.data.frame(table(res2min$Team,res2min$Homeaway))
+colnames(hometab)=c("Team","Homeaway","Count")
+
+hometab$Homeaway = factor(hometab$Homeaway, levels = c(2,1))
+
+######################################################################################
+######################################################################################
+######################################################################################
+
+refs = matrix(rep(NA,N*4),ncol=4)
+best = matrix(rep(NA,N*2),ncol=2)
+
+for(i in 1:N)
+{
+  tmp = MATCHLIST[[i]]$meta
+  refs[i,1:2] = tmp[which(tmp[,1]=="Hoveddommer"),2]
+  refs[i,3:4] = MATCHLIST[[i]]$scoring[1:2,1]
+  best[i,1]=tmp[which(tmp[,1]=="Best player home"),2]
+  best[i,2]=tmp[which(tmp[,1]=="Best player away"),2]
+}
+
+tmp = cbind(c(refs[,1],refs[,2]),rbind(refs[,3:4],refs[,3:4]))
+reftab=rbind(tmp[,1:2],tmp[,c(1,3)])
+
+toprefs=droplevels(as.data.frame(sort(table(reftab[,1]),decreasing = TRUE))[1:13,1])
+
+topreftab=reftab[is.element(reftab[,1],toprefs),]
+
+refcount= as.data.frame(table(topreftab[,1],topreftab[,2])) 
+colnames(refcount)=c("Referee","Team","Count")
+
+refcount$Team = factor(refcount$Team, levels = rev(teams))
+
+######################################################################################
+######################################################################################
+######################################################################################
+
+TOIdata = data.frame(Team=teams_displaynames,G1=rep(0,n),G2=rep(0,n),G3=rep(0,n),G4=rep(0,n),Games=rep(0,n))
+
+for(j in 1:n)
+{
+  for(i in 1:N)
+  {
+    if(is.element(teams[j],MATCHLIST[[i]]$scoring[,1]))
+    {
+      homeaway=which(teams[j] == MATCHLIST[[i]]$scoring[,1])
+      if(homeaway == 1)
+      {
+        tmp = MATCHLIST[[i]]$home
+      }else{
+        tmp = MATCHLIST[[i]]$away
+      }
+      
+      TOIs=as.numeric(gsub(":", "", tmp[tmp[,10]!="",10]))
+      TOIs=sort(round((TOIs %/% 100)+((TOIs %% 100)/60),2),decreasing = TRUE)
+      nt=length(TOIs)
+      
+      if(nt > 10)
+      {
+        TOIdata$Games[j] = TOIdata$Games[j] + 1
+        TOIdata$G1[j] = TOIdata$G1[j] + mean(TOIs[1:5])
+        TOIdata$G2[j] = TOIdata$G2[j] + mean(TOIs[6:10])
+        TOIdata$G3[j] = TOIdata$G3[j] + ifelse(nt>14,mean(TOIs[11:15]),mean(TOIs[11:nt]))
+        if(nt > 15)
+        {
+          TOIdata$G4[j] = TOIdata$G4[j] + ifelse(nt<20,mean(TOIs[16:nt]),mean(TOIs[16:20]))  
+        }
+      }
+    }
+  }
+}
+TOIdata=cbind(Team=TOIdata[,1],TOIdata[,2:5]/TOIdata$Games)
+
+TOItop = melt(TOIdata)
+colnames(TOItop)=c("Team","Type","Val")
+TOItop$Maxval = rep(TOItop$Val[1:n],4)
+
+TOItop$Type = factor(TOItop$Type, levels = c("G4","G3","G2","G1"))
+
+```
+
+ 
+## Goalscoring 
+
+The figure shows total goals per team, for each of the three periods. Shooting percentages are also displayed (the percentage of shots on goal that results in a goal).
+ 
+```{r fig1, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+ggplot() + geom_bar(aes(y = Goals, x = reorder(Team, Goals), fill = Period),colour="black",width=.8,alpha=.8, data = goaldat,stat="identity")+
+  coord_flip()+theme_bw()+scale_fill_brewer(palette="Paired",breaks=c("g1", "g2", "g3"),labels=c("First Period", "Second Period", "Third Period"))+
+  theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
+  theme(legend.position="top",legend.title=element_blank(),legend.spacing.x = unit(2, 'cm'),legend.text=element_text(size=14),axis.title.y = element_blank())+ylab("Goals scored (shooting percentages)")+
+  theme(axis.text.x=element_text(size=18),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))+
+  geom_text(data=eff, aes(x = Team, y = pos,label = paste0(eff,"%")), size=5)+
+  guides(fill = guide_legend(nrow = 1,keywidth=1.2,keyheight=1.2,default.unit="cm"))
+```
+
+<br/>
+
+## Attendance
+
+Here we see how attendance depends on which team is visiting, shown as percentage increase. The baseline is the average attendance at the home teams' stadium this season.
+
+```{r fig2, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 8}
+
+ggplot(plotdat, aes(Away,Home,z=val))+geom_tile(aes(fill=val))+theme_bw()+
+  scale_fill_gradientn(colours=brewer.pal(9,"RdYlGn"),name="% attendance increase",breaks=log(c(-30,0,40,135-20)+absminval+30),labels=c("-30","0","40","135"))+ 
+  theme(axis.text.x = element_text(angle=60,hjust=1,vjust=1.0))+
+  xlab("Away team") + ylab("Home team")+
+  theme(legend.text =element_text(size=14),legend.title =element_text(size=14))+
+  theme(axis.text.x=element_text(size=14),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))+
+  theme(legend.position = "top",legend.box = "vertical",legend.key.size = unit(1.2, "cm"))
+
+```
+
+<br/>
+
+## Penalty types
+
+The figure shows the total count of each penalty type, for all teams.
+
+```{r fig3, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+ggplot() + geom_bar(aes(y = Count, x = reorder(Type,Count)),fill = "#A6CEE3",alpha=0.8,colour="black",width=.8, data = pentab,stat="identity")+
+  coord_flip()+theme_bw()+theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
+  theme(axis.title.y = element_blank())+ylab("Number of 2 min penalties")+
+  theme(axis.text.x=element_text(size=18),axis.text.y=element_blank(),axis.title=element_text(size=16,face="bold"))+
+  geom_text(data=pentab,aes(x = reorder(Type,Count), y = 65,label = Type), size=5)
+
+```
+
+<br/>
+
+## Penalty types per team
+
+The figure shows the total count of each penalty type, per team.
+
+```{r fig4, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+ggplot() + geom_bar(aes(y = Count, x = reorder(Team, Count), fill = Type),colour="black",width=.8,alpha=.8, data = pendat,stat="identity")+
+  coord_flip()+theme_bw()+scale_fill_brewer(palette="Paired",breaks=pendat$Type,labels=pendat$Type)+
+  theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
+  theme(axis.title.y = element_blank())+ylab("Number of 2 min penalties")+
+  theme(legend.position="top",legend.title=element_blank(),legend.spacing.x = unit(1, 'cm'),legend.text=element_text(size=13))+
+  theme(axis.text.x=element_text(size=18),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))
+  
+```
+
+<br/>
+
+## Home advantage?
+
+The figure shows the total count of penalties on home ice and away ice, per team.
+
+```{r fig5, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+ggplot() + geom_bar(aes(y = Count, x = reorder(Team, Count), fill = Homeaway),colour="black",width=.8,alpha=.8, data = hometab,stat="identity", position="dodge")+
+  coord_flip()+theme_bw()+scale_fill_brewer(palette="Paired",breaks=c(1,2),labels=c("Home","Away"))+
+  theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
+  theme(legend.position="top",legend.title=element_blank(),legend.spacing.x = unit(0.25, 'cm'),legend.text=element_text(size=12),axis.title.y = element_blank())+ylab("Number of 2 min penalties")+
+  theme(axis.text.x=element_text(size=18),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))
+
+  
+```
+
+<br/>
+
+## Referees
+
+Are the referees assigned matches at random, or is there perhaps a geographical factor?
+
+```{r fig6, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 7}
+
+ggplot() + geom_bar(aes(y = Count/2, x = reorder(Referee,Count), fill = Team),colour="black",width=.8,alpha=.8, data = refcount,stat="identity")+coord_flip()+theme_bw()+
+           scale_fill_brewer(palette="Paired",breaks=teams,labels=teams_displaynames)+
+  theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
+  theme(legend.position="top",legend.title=element_blank(),legend.text=element_text(size=12),axis.title.y = element_blank())+
+  #guides(fill = guide_legend(nrow = 1,keywidth=1.5,keyheight=1.5,default.unit="cm"))+
+  ylab("Number of matches as referee")+theme(axis.text.x=element_text(size=18),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))
+  
+```
+
+<br/>
+
+## Time on ice?
+
+This last figure shows how hard each team matches their top players, and to what degree they use all 20 players. The "top 5 players" average is the average time on ice for the five players with most time on ice in each game, i.e. not necessarily the same five players in each game. 
+
+```{r fig7, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 8}
+
+ggplot() + geom_bar(aes(y = Val, x = reorder(Team, Maxval), fill = Type),colour="black",width=.8,alpha=.8, data = TOItop,stat="identity", position="dodge")+
+  coord_flip()+theme_bw()+scale_fill_brewer(palette="Paired",breaks=c("G1","G2","G3","G4"),labels=c("Top 5 players","6-10","11-15","16-20"))+
+  theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
+  theme(legend.position="top",legend.title=element_blank(),legend.spacing.x = unit(1, 'cm'),legend.text=element_text(size=12),axis.title.y = element_blank())+ylab("Average time on ice per match")+
+  theme(axis.text.x=element_text(size=18),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))+
+  guides(fill = guide_legend(nrow = 1,keywidth=1.2,keyheight=1.2,default.unit="cm"))
+  
+```

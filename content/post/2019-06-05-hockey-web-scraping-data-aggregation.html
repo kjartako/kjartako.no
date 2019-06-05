@@ -1,0 +1,80 @@
+---
+title: 'Hockey web scraping: Data aggregation'
+author: Kjartan Kloster Osmundsen
+date: '2019-06-05'
+slug: hockey-web-scraping-data-aggregation
+categories:
+  - Hockey
+  - R
+tags: []
+image:
+  caption: ''
+  focal_point: ''
+---
+
+
+
+<p>Continuing from my <a href="https://www.kjartako.no/post/web-scraping-with-r-visualizing-hockey-statistics/">previous post</a>, I now focus on detailed match statistics, rather than the available aggregate data. By scraping very detailed data from each match of the 2018/2019 Norwegian hockey season, my goal is to present aggregate data that are not available at the source webpage. The data material is scraped from <a href="https://www.hockey.no/live?date=05.06.2019&amp;tournamentid=381196&amp;teamid=0&amp;seasonid=200830">Hockey live</a>.</p>
+<div id="the-code" class="section level1">
+<h1>The code</h1>
+<p>I started by simply downloading the main HTML file manually from the web browser. This main page cointains URL links to all 216 matches of the regular season. Scraping the HTML table is straightforward, but this gives you the URL text, not the actual URL link. I found this <a href="https://stackoverflow.com/questions/42119851/how-to-get-the-link-inside-html-table-using-rvest?rq=1">tip</a>, saying that an easy fix is to edit rvest’s html_table-function, using the trace-function in R:</p>
+<pre class="r"><code>library(rvest)
+match_dat = read_html(&quot;GET_18_19.html&quot;,encoding =&quot;UTF-8&quot;)
+
+matchList=match_dat%&gt;%html_nodes(&quot;table&quot;)%&gt;%.[[3]]%&gt;%html_table()
+
+trace(rvest:::html_table.xml_node, quote({ 
+  values      &lt;- lapply(lapply(cells, html_node, &quot;a&quot;), html_attr, name = &quot;href&quot;)
+  values[[1]] &lt;- html_text(cells[[1]])
+}), at = 14)
+
+tmp=match_dat%&gt;%html_nodes(&quot;table&quot;)%&gt;%.[[3]]%&gt;%html_table()
+untrace(rvest:::html_table.xml_node)
+
+matchList$Results=tmp$Results</code></pre>
+<p>The next step is simply to iterate over the URL links, adding the scraped data of each URL to a list. The actual scraping in each iteration is similar to what is done in my <a href="https://www.kjartako.no/post/web-scraping-with-r-visualizing-hockey-statistics/">previous post</a>. Below are the resulting aggregate data produced by iterating this list of match statistics.</p>
+</div>
+<div id="the-results" class="section level1">
+<h1>The results</h1>
+<div id="goalscoring" class="section level2">
+<h2>Goalscoring</h2>
+<p>The figure shows total goals per team, for each of the three periods. Shooting percentages are also displayed (the percentage of shots on goal that results in a goal).</p>
+<p><img src="/post/2019-06-05-hockey-web-scraping-data-aggregation_files/figure-html/fig1-1.png" width="960" /></p>
+<p><br/></p>
+</div>
+<div id="attendance" class="section level2">
+<h2>Attendance</h2>
+<p>Here we see how attendance depends on which team is visiting, shown as percentage increase. The baseline is the average attendance at the home teams’ stadium this season.</p>
+<p><img src="/post/2019-06-05-hockey-web-scraping-data-aggregation_files/figure-html/fig2-1.png" width="960" /></p>
+<p><br/></p>
+</div>
+<div id="penalty-types" class="section level2">
+<h2>Penalty types</h2>
+<p>The figure shows the total count of each penalty type, for all teams.</p>
+<p><img src="/post/2019-06-05-hockey-web-scraping-data-aggregation_files/figure-html/fig3-1.png" width="960" /></p>
+<p><br/></p>
+</div>
+<div id="penalty-types-per-team" class="section level2">
+<h2>Penalty types per team</h2>
+<p>The figure shows the total count of each penalty type, per team.</p>
+<p><img src="/post/2019-06-05-hockey-web-scraping-data-aggregation_files/figure-html/fig4-1.png" width="960" /></p>
+<p><br/></p>
+</div>
+<div id="home-advantage" class="section level2">
+<h2>Home advantage?</h2>
+<p>The figure shows the total count of penalties on home ice and away ice, per team.</p>
+<p><img src="/post/2019-06-05-hockey-web-scraping-data-aggregation_files/figure-html/fig5-1.png" width="960" /></p>
+<p><br/></p>
+</div>
+<div id="referees" class="section level2">
+<h2>Referees</h2>
+<p>Are the referees assigned matches at random, or is there perhaps a geographical factor?</p>
+<p><img src="/post/2019-06-05-hockey-web-scraping-data-aggregation_files/figure-html/fig6-1.png" width="960" /></p>
+<p><br/></p>
+</div>
+<div id="time-on-ice" class="section level2">
+<h2>Time on ice?</h2>
+<p>This last figure shows how hard each team matches their top players, and to what degree they use all 20 players. The “top 5 players” average is the average time on ice for the five players with most time on ice in each game, i.e. not necessarily the same five players in each game.</p>
+<p><img src="/post/2019-06-05-hockey-web-scraping-data-aggregation_files/figure-html/fig7-1.png" width="960" /></p>
+</div>
+</div>
