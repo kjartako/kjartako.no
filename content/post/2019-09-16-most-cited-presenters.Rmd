@@ -1,0 +1,159 @@
+---
+title: 'Finding the most cited presenters'
+author: "Kjartan Kloster Osmundsen"
+date: '2019-09-16'
+image:
+  caption: ''
+  focal_point: ''
+slug: most-cited-presenters
+tags: []
+categories:
+- Web scraping
+- R
+---
+
+[The 3rd International Conference on Econometrics and Statistics (EcoSta 2019)](http://cmstatistics.org/EcoSta2019/) took place at the National Chung Hsing University (NCHU), Taichung, Taiwan 25-27 June 2019. The conference consisted of 10 parallel sessions, each having 14-17 sessions with 3-5 speakers occurring at the same time. The full programme is available [here](http://cmstatistics.org/EcoSta2019/fullprogramme.php).
+
+Naturally, it was quite the optimization problem to pick which sessions to attend. For parallel sessions where multiple sessions appeared interesting and relevant for my research, my final choice became rather arbitrary. 
+
+After the conference, I decided to put my newly acquired web scraping skills to good use. After collecting the names of the 593 presenting authors at the conference (and the co-authors of their presented papers) from the conference web site, I scraped the [Google Scholar](https://scholar.google.com/) profile of each author, to obtain a citation count for each of the 150 sessions.     
+
+
+## The code
+
+I started by scraping sessions, authors and titles using the methods from my [previous post](https://www.kjartako.no/post/hockey-web-scraping-data-aggregation/). Then I wrote a function which calculates the total citation count for a session (consisting of 3-5 presentations). Calling the function for each session, and calculating the column sum of the returned citation matrix, gives the desired results. 
+
+<details> <summary>Citation count function</summary>
+```{r,eval=FALSE}
+# The input is a vector of URLs (each talk has an info web page)
+# Returns a Nx2 matrix:
+# First column: Presenting authors citation sum 
+# Second column: Total citation sum
+scoreFunc=function(talklist)
+{
+  N = length(talklist)
+  score=matrix(0,nrow=N,ncol=2)
+  ScholarURL="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&q="
+
+  for(u in 1:N)
+  {
+    talk_html = read_html(talklist[u],encoding ="UTF-8")
+    talk=talk_html%>%html_node(".newline+ span")%>%html_text()
+
+    authors=strsplit(talk, split="\\)")[[1]]
+    authors=gsub("\\[presenting]","",authors)
+    for(i in 1:length(authors))
+    {
+      authors[i]=gsub(" ","+",strsplit(authors[i], split="\\(")[[1]][1])
+      if(nchar(authors[i])>3)
+      {
+        author_html = read_html(paste(ScholarURL,authors[i],sep=""))
+        tmp=strsplit(toString(author_html%>%html_node("body")%>%html_text()), split="Cited by ")[[1]]
+        if(grepl("Verified email", tmp[1], fixed=TRUE))
+        {
+          tmpscore=as.numeric(gsub("([0-9]+).*$", "\\1", tmp[2]))
+          if(i==1){score[u,1]=tmpscore}
+          score[u,2]=score[u,2]+tmpscore
+        }
+      }
+    }
+  }
+  return(score)
+}
+```
+</details>
+
+```{r,include=FALSE}
+ecodat = readRDS(file="data/ecosta_data.rds")
+citations=readRDS(file="data/citations.rds")
+
+titles = ecodat$TitleAuthorList
+
+reslist=list()
+n=0
+a=0
+
+for(k in 1:length(titles))
+{
+  if(nrow(titles[[k]])==2)
+  {
+    n=n+1
+    reslist[[n]]=list(title = titles[[k]][1,1])
+    reslist[[n]]$res = matrix(NA,nrow=nrow(citations[[n]]),ncol=3)
+    colnames(reslist[[n]]$res)=c("Session","Presenters citations","Total citations")
+    a=0
+  }
+
+  if(nrow(titles[[k]])==3)
+  {
+    a=a+1
+    reslist[[n]]$res[a,1] = titles[[k]][2,1]
+    reslist[[n]]$res[a,2:3] = as.numeric(citations[[n]][a,])
+  }
+}
+
+
+createTable = function(id)
+{
+  DT::datatable(reslist[[id]]$res,rownames = FALSE,width = "85%",
+              options = list(pageLength = 5,lengthChange=FALSE,searching=FALSE,info=FALSE,
+                             order = list(list(1, 'desc')),
+                             columnDefs = list(list(
+            className = 'dt-center', targets = 1),list(
+            className = 'dt-center', targets = 2))))
+}
+
+```
+
+## Results
+
+
+### Parallel session B
+```{r,echo=FALSE}
+createTable(1)
+```
+
+### Parallel session C
+```{r,echo=FALSE}
+createTable(2)
+```
+
+### Parallel session D
+```{r,echo=FALSE}
+createTable(3)
+```
+
+### Parallel session F
+```{r,echo=FALSE}
+createTable(4)
+```
+
+### Parallel session G
+```{r,echo=FALSE}
+createTable(5)
+```
+
+### Parallel session H
+```{r,echo=FALSE}
+createTable(6)
+```
+
+### Parallel session I
+```{r,echo=FALSE}
+createTable(7)
+```
+
+### Parallel session K
+```{r,echo=FALSE}
+createTable(8)
+```
+
+### Parallel session L
+```{r,echo=FALSE}
+createTable(9)
+```
+
+### Parallel session M
+```{r,echo=FALSE}
+createTable(10)
+```

@@ -47,7 +47,7 @@ library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
 
-MATCHLIST=readRDS(file="matches.rds")
+MATCHLIST=readRDS(file="data/matches.rds")
 
 N = length(MATCHLIST)
 

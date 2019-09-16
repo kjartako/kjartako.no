@@ -8,8 +8,9 @@ image:
 slug: web-scraping-with-r-visualizing-hockey-statistics
 tags: []
 categories:
-- R
+- Web scraping
 - Hockey
+- R
 ---
 
 
@@ -26,7 +27,7 @@ EPstats = EPdat[!is.na(EPdat[,1]),]</code></pre>
 <p>However, the data tables at Hockey Live are populated with javascript, which prevents directly using the above method. I followed this <a href="https://www.datacamp.com/community/tutorials/scraping-javascript-generated-data-with-r">tutorial</a>, which suggests using <a href="%22https://http://phantomjs.org/%22">PhantomJS</a> to fetch the HTML page after the underlying javascript code has done its work. The rvest-method can then be applied to the resulting HTML page:</p>
 <pre class="r"><code># assuming phantomjs.exe and season_scrape.js is placed in the working folder
 system(&quot;./phantomjs season_scrape.js&quot;)
-season_dat = read_html(&quot;season.html&quot;,encoding =&quot;UTF-8&quot;)
+season_dat = read_html(&quot;data/season.html&quot;,encoding =&quot;UTF-8&quot;)
 season=season_dat%&gt;%html_nodes(&quot;table&quot;)%&gt;%.[[1]]%&gt;%html_table()</code></pre>
 <pre class="js"><code># season_scrape.js
 var webPage = require(&#39;webpage&#39;);
@@ -34,7 +35,7 @@ var page = webPage.create();
 var fs = require(&#39;fs&#39;);
 
 page.open(&#39;https://www.hockey.no/live/Statistics/Players?date=21.04.2019&amp;tournamentid=381196&amp;teamid=220882&#39;, function (status) {
-  fs.write(&#39;season.html&#39;,page.content,&#39;w&#39;)
+  fs.write(&#39;data/season.html&#39;,page.content,&#39;w&#39;)
   phantom.exit();
 });</code></pre>
 <p>Then, I combine the data from the two different sources, by merging the respective data frames. Unfortunately, the sources are not using identical player names, so some string handling is required to extract the last surname, which is then used as the merging column:</p>

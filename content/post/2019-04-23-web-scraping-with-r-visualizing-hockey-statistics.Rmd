@@ -35,7 +35,7 @@ However, the data tables at Hockey Live are populated with javascript, which pre
 ```{r b,eval=FALSE}
 # assuming phantomjs.exe and season_scrape.js is placed in the working folder
 system("./phantomjs season_scrape.js")
-season_dat = read_html("season.html",encoding ="UTF-8")
+season_dat = read_html("data/season.html",encoding ="UTF-8")
 season=season_dat%>%html_nodes("table")%>%.[[1]]%>%html_table()
 ```
 
@@ -46,7 +46,7 @@ var page = webPage.create();
 var fs = require('fs');
 
 page.open('https://www.hockey.no/live/Statistics/Players?date=21.04.2019&tournamentid=381196&teamid=220882', function (status) {
-  fs.write('season.html',page.content,'w')
+  fs.write('data/season.html',page.content,'w')
   phantom.exit();
 });
 ```
@@ -122,7 +122,7 @@ special_chars = list('S'='S', 's'='s', 'Z'='Z', 'z'='z', 'À'='A', 'Á'='A', 'Â
                           'ö'='o', 'ù'='u', 'ú'='u', 'û'='u', 'ý'='y', 'ý'='y', 'þ'='b', 'ÿ'='y' )
 ########
 #system("./phantomjs season_scrape.js")
-season_dat = read_html("season.html",encoding ="UTF-8")
+season_dat = read_html("data/season.html",encoding ="UTF-8")
 season=season_dat%>%html_nodes("table")%>%.[[1]]%>%html_table()
 
 for(i in 1:nrow(season))
@@ -153,7 +153,7 @@ season = merge(season,names)
 ###########################################################################################################
 
 #system("./phantomjs playoffs_scrape.js")
-playoffs_dat = read_html("playoffs.html",encoding ="UTF-8")
+playoffs_dat = read_html("data/playoffs.html",encoding ="UTF-8")
 playoffs=playoffs_dat%>%html_nodes("table")%>%.[[1]]%>%html_table()
 
 for(i in 1:nrow(playoffs))
