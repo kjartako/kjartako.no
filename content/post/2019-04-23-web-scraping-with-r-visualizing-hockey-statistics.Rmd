@@ -8,8 +8,9 @@ image:
 slug: web-scraping-with-r-visualizing-hockey-statistics
 tags: []
 categories:
-- R
+- Web scraping
 - Hockey
+- R
 ---
 
 I wanted to visualize the personal statistics for the hockey players of [Stavanger Oilers](https://oilers.no), for the 2018/2019 season.
