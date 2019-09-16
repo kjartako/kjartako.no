@@ -103,57 +103,67 @@ createTable = function(id)
             className = 'dt-center', targets = 2))))
 }
 
+tab1=createTable(1)
+tab2=createTable(2)
+tab3=createTable(3)
+tab4=createTable(4)
+tab5=createTable(5)
+tab6=createTable(6)
+tab7=createTable(7)
+tab8=createTable(8)
+tab9=createTable(9)
+tab10=createTable(10)
+
 ```
 
 ## Results
 
-
 ### Parallel session B
-```{r,echo=FALSE}
-createTable(1)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab1,width="100%",height="300")
 ```
 
 ### Parallel session C
-```{r,echo=FALSE}
-createTable(2)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab2,width="100%",height="300")
 ```
 
 ### Parallel session D
-```{r,echo=FALSE}
-createTable(3)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab3,width="100%",height="300")
 ```
 
 ### Parallel session F
-```{r,echo=FALSE}
-createTable(4)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab4,width="100%",height="300")
 ```
 
 ### Parallel session G
-```{r,echo=FALSE}
-createTable(5)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab5,width="100%",height="300")
 ```
 
 ### Parallel session H
-```{r,echo=FALSE}
-createTable(6)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab6,width="100%",height="300")
 ```
 
 ### Parallel session I
-```{r,echo=FALSE}
-createTable(7)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab7,width="100%",height="300")
 ```
 
 ### Parallel session K
-```{r,echo=FALSE}
-createTable(8)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab8,width="100%",height="300")
 ```
 
 ### Parallel session L
-```{r,echo=FALSE}
-createTable(9)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab9,width="100%",height="300")
 ```
 
 ### Parallel session M
-```{r,echo=FALSE}
-createTable(10)
+```{r,echo=FALSE, warning=FALSE}
+widgetframe::frameWidget(tab10,width="100%",height="300")
 ```
