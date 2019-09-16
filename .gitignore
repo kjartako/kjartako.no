@@ -1,6 +1,7 @@
 resources/
 public/
 RANDOM/
+content/post/data
 
 *.Rproj
 
