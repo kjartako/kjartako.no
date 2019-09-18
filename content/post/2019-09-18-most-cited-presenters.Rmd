@@ -1,7 +1,7 @@
 ---
 title: 'Finding the most cited presenters'
 author: "Kjartan Kloster Osmundsen"
-date: '2019-09-16'
+date: '2019-09-18'
 image:
   caption: ''
   focal_point: ''
