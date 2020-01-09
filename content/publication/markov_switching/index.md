@@ -19,7 +19,7 @@ publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
 publication = "*Communications in Statistics-Simulation and Computation*, 1-22."
-publication_short = "*Communications in Statistics-Simulation and Computation*, 1-22."
+publication_short = "*Communications in Statistics-Simulation and Computation*, 1-22"
 
 # Abstract and optional shortened version.
 abstract = "This article proposes a method to estimate Markov-switching vector autoregressive models that combines (integrated over latent states) marginal likelihood and Hamiltonian Monte Carlo. The method is compared to commonly used implementations of Gibbs sampling. The proposed method is found to be numerically robust, flexible with respect to model specification and easy to implement using the Stan software package. The methodology is illustrated on a real data application exploring time-varying cointegration relationships in a data set consisting of crude oil and natural gas prices."
