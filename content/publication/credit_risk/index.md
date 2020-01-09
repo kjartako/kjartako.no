@@ -18,8 +18,8 @@ authors = ["Kjartan Kloster Osmundsen"]
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "In *Journal of International Financial Markets, Institutions and Money*, Elsevier."
-publication_short = "In *JIFMIM*"
+publication = "*Journal of International Financial Markets, Institutions and Money* 57, 80-93."
+publication_short = "*Journal of International Financial Markets, Institutions and Money* 57, 80-93."
 
 # Abstract and optional shortened version.
 abstract = "The Basel Committee’s minimum capital requirement function for banks’ credit risk is based on value at risk. This paper performs a statistical analysis that examines the consequences of instead basing it on expected shortfall, a switch that has already been set in motion for market risk regulation. The ability to capture tail risk as well as diversification is examined in detail for the two risk measures. In addition, the article compares confidence levels, estimation uncertainty, model validation and parameter sensitivity. The empirical analysis is carried out by both theoretical simulations and real data from a Norwegian savings bank group’s corporate portfolio. The findings indicate that the use of correctly calibrated expected shortfall results in similar capital requirement levels, with slightly increased levels for exposures with very low default probability. The estimation precision is not inferior to value at risk, even at very high confidence levels."
