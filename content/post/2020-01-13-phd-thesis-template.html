@@ -1,0 +1,36 @@
+---
+title: PhD thesis template
+author: Kjartan Kloster Osmundsen
+date: '2020-01-13'
+image:
+  caption: ''
+  focal_point: ''
+slug: phd-thesis-template
+tags: []
+categories:
+- Latex
+---
+
+
+
+<p>When writing up my PhD thesis, i learned that the University of Stavanger has no official Latex template, only a very basic <a href="https://www.uis.no/getfile.php/13534803/Forskerutdanning/Bilder/Mal_Engelsk_W.docx">Word template</a>. I ended up making my own <a href="https://github.com/kjartako/PhD_thesis_template">Latex template</a>, based on the available Word template.</p>
+<div id="the-latex-template" class="section level2">
+<h2>The Latex template</h2>
+<p>The template consists of one style file and five content files, in addition to a bibliography file and the University’s logo.</p>
+<div id="the-style-file" class="section level3">
+<h3>The style file</h3>
+<p>The style file is the key part of the template, defining margins, text fonts and sizes, page numbering and so on. It also defines the style of the title page, colophon, table of contents, page numbering and references. The style file also defines commands to attach papers at the end of the thesis.</p>
+</div>
+<div id="the-content-files" class="section level3">
+<h3>The content files</h3>
+<p>The five following content files is where the template user will input his text: “Preface.tex”, “Abstract.tex”, “Introduction.tex”, “Paper_list.tex” and “Thesis.tex”.</p>
+<p>“Thesis.tex” is the main Latex file, which will generate the PhD thesis as a PDF file. In this file, the user will have to specify the thesis title, author name, year, faculty and department name, and data for the colophon page. The titles of attached papers is also specified in this file. You can also adjust how the attached papers should be imported to the document:</p>
+<pre class="r"><code>\includepdf[pages=-,scale=0.74,offset=0mm 10mm,pagecommand={\thispagestyle{plain}}]{papers/Paper1.pdf}</code></pre>
+<p>Further information on the papers are entered in the “Paper_list.tex” file.</p>
+<p>Citations referred to in “Introduction.tex” must be added to the bibliography file “Thesis_bib.bib”.</p>
+</div>
+<div id="the-result" class="section level3">
+<h3>The result</h3>
+<p>The Github directory also includes <a href="https://github.com/kjartako/PhD_thesis_template/blob/master/Thesis.pdf">“Thesis.pdf”</a>, which is generated using filler text, to illustrate how the thesis could end up looking.</p>
+</div>
+</div>
