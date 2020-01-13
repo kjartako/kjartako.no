@@ -12,7 +12,7 @@ categories:
 ---
 
 
-When writing up my PhD thesis, i learned that the University of Stavanger has no official Latex template, only a very basic [Word template](https://www.uis.no/getfile.php/13534803/Forskerutdanning/Bilder/Mal_Engelsk_W.docx). I ended up making my own [Latex template](https://github.com/kjartako/PhD_thesis_template), based on the available Word template.
+When writing up my PhD thesis, I learned that the University of Stavanger has no official Latex template, only a very basic [Word template](https://www.uis.no/getfile.php/13534803/Forskerutdanning/Bilder/Mal_Engelsk_W.docx). I ended up making my own [Latex template](https://github.com/kjartako/PhD_thesis_template), based on the available Word template.
 
 ## The Latex template
 
