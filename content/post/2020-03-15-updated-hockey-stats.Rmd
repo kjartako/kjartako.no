@@ -39,6 +39,7 @@ for(i in 1:nrow(season))
   tmp=strsplit(season$PLAYER[i], ",")[[1]]
   season$PLAYER[i]=paste(substr(tmp[2],2,2),tmp[1])
 }
+season[season$PLAYER=="S Klavestad",2]="A Klavestad"
 ##########
 EP = read_html("https://www.eliteprospects.com/team/845/stavanger-oilers/2019-2020?tab=stats")
 EPdat=EP%>%html_nodes("table")%>%.[[2]]%>%html_table()
@@ -58,6 +59,57 @@ for(j in 1:nrow(EPstats))
 }
 
 season = merge(season,names)
+######################################################
+MATCHLIST=readRDS(file="data/matches20.rds")
+N = length(MATCHLIST)
+TOIdata = matrix(NA,ncol=3)
+
+for(i in 1:N)
+{
+  if(is.element("Stavanger Ishockeyklubb",MATCHLIST[[i]]$scoring[,1]))
+  {
+    homeaway=which("Stavanger Ishockeyklubb" == MATCHLIST[[i]]$scoring[,1])
+    if(homeaway == 1)
+    {
+      tmp = MATCHLIST[[i]]$home
+    }else{
+      tmp = MATCHLIST[[i]]$away
+    }
+    
+    gamedat=tmp[tmp[,2]!="",c(1,2,10)] 
+    ng = nrow(gamedat)
+    for(k in 1:ng)
+    {
+      gamedat[k,2]=gsub('\\.',"",strsplit(gamedat[k,2], " \\(")[[1]][1])
+    }
+    
+    TOIdata = rbind(TOIdata,as.matrix(gamedat))
+  }
+}
+
+TOIplayers=data.frame(TOIdata[-1,2:3])
+colnames(TOIplayers)=c("PLAYER","TOI")
+
+tmp=TOIplayers$TOI
+TOI_min=numeric(length(tmp))
+for(k in 1:length(tmp))
+{
+  if(tmp[k]=="")
+  {
+    TOI_min[k]=0
+  }
+  else
+  {
+    timeval = as.numeric(gsub(":", "", tmp[k]))
+    TOI_min[k]=(timeval %/% 100)+((timeval %% 100)/60)
+  }
+}
+TOIplayers$TOI=TOI_min
+
+TOIplayers=aggregate(. ~ PLAYER, TOIplayers, sum)
+TOIplayers$PLAYER=as.character(TOIplayers$PLAYER)
+TOIplayers[TOIplayers$PLAYER=="S Klavestad",1]="A Klavestad"
+season = merge(season,TOIplayers)
 ```
 
 ```{r fig1, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
@@ -72,6 +124,29 @@ ggplot(season[season$PTS>0,],aes(x=PTS/GP,y=reorder(NAME,PTS/GP),fill=col))+
   geom_segment(aes(yend=NAME,x=PTS/GP,xend=G/GP),colour="grey50",size=1)+
   geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Total points per game (goals in black)")+
   scale_x_continuous(position = "top",expand = c(0, 0),breaks = seq(from=0,by=0.25,to=max(season$PTS/season$GP)),limits = c(0,max(season$PTS/season$GP)*1.1))+
+  theme(panel.grid.minor.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
+  theme(axis.text=element_text(size=14),axis.title=element_text(size=14,face="bold"))+
+  theme(panel.border = element_blank(),axis.line = element_line(colour = "grey"))
+
+```
+
+<br/>
+<br/>
+
+```{r fig1.5, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+season$col <- cut(
+  60*(season$PTS/season$TOI),
+  breaks=c(0, 1, 2, 3, 4, Inf)
+)
+
+ggplot(season[season$PTS>0,],aes(x=60*(PTS/TOI),y=reorder(NAME,60*(PTS/TOI)),fill=col))+
+  geom_segment(aes(yend=NAME,x=60*(G/TOI),xend=0),colour="black",size=1.5)+
+  geom_segment(aes(yend=NAME,x=60*(PTS/TOI),xend=60*(G/TOI)),colour="grey50",size=1)+
+  geom_point(size=4,shape=21)+theme_bw()+ylab("")+xlab("Total points per 60 min TOI (goals in black)")+
+  scale_x_continuous(position = "top",expand = c(0, 0),breaks = seq(from=0,by=1,to=60*max(season$PTS/season$TOI)),limits = c(0,60*max(season$PTS/season$TOI)*1.1))+
   theme(panel.grid.minor.x = element_blank(),
         panel.grid.major.y = element_blank(),
         legend.position = "none")+scale_fill_brewer("", palette = "Blues")+
