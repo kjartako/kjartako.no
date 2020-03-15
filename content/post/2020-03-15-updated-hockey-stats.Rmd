@@ -449,7 +449,7 @@ ggplot(plotdat, aes(Away,Home,z=val))+geom_tile(aes(fill=col))+theme_bw()+
   xlab("Away team") + ylab("Home team")+ggtitle("Game attendance")+
   theme(legend.text =element_text(size=12),title =element_text(size=18))+
   theme(axis.text.x=element_text(size=14),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))+
-  theme(legend.position = "top")+guides(fill = guide_legend(nrow = 1,keywidth=0.8,keyheight=0.8,default.unit="cm"))
+  theme(legend.position = "top")+guides(fill = guide_legend(nrow = 1,keywidth=0.8,keyheight=0.8,default.unit="cm"))+
   theme(panel.border = element_blank(),axis.line = element_line(colour = "grey"))
 ```
 
