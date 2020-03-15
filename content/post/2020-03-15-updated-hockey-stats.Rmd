@@ -446,10 +446,10 @@ ggplot() + geom_bar(aes(y = Goals, x = reorder(Team, Goals), fill = Period),colo
 ggplot(plotdat, aes(Away,Home,z=val))+geom_tile(aes(fill=col))+theme_bw()+
   scale_fill_brewer("", palette = "YlGn",na.value="grey",labels=c("Below average","0-20 % increase","20-60 % increase",">60 % increase","NA"))+
   theme(axis.text.x = element_text(angle=60,hjust=1,vjust=1.0))+
-  xlab("Away team") + ylab("Home team")+
-  theme(legend.text =element_text(size=12),legend.title =element_text(size=14))+
+  xlab("Away team") + ylab("Home team")+ggtitle("Game attendance")+
+  theme(legend.text =element_text(size=12),title =element_text(size=18))+
   theme(axis.text.x=element_text(size=14),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))+
-  theme(legend.position = "top")+guides(fill = guide_legend(nrow = 1,keywidth=0.8,keyheight=0.8,default.unit="cm"))+
+  theme(legend.position = "top")+guides(fill = guide_legend(nrow = 1,keywidth=0.8,keyheight=0.8,default.unit="cm"))
   theme(panel.border = element_blank(),axis.line = element_line(colour = "grey"))
 ```
 
