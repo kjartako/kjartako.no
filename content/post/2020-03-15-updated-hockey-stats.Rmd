@@ -13,7 +13,7 @@ image:
   focal_point: ''
 ---
 
-This post is simply my previous web scraping scripts hockey applied to data for the 2019/2020 season, both the [Stavanger Oilers player statistics](https://www.kjartako.no/post/web-scraping-with-r-visualizing-hockey-statistics/) and [aggregated statistics for the Norwegian leauge](https://www.kjartako.no/post/hockey-web-scraping-data-aggregation/). 
+This post is simply my previous hockey scripts applied to data for the 2019/2020 season, both the [Stavanger Oilers player statistics](https://www.kjartako.no/post/web-scraping-with-r-visualizing-hockey-statistics/) and [aggregated statistics for the Norwegian league](https://www.kjartako.no/post/hockey-web-scraping-data-aggregation/). 
 
 However, after recently reading the book [Storytelling with data](http://www.storytellingwithdata.com/books), I felt obligated to make some minor changes to the graphs from last season. 
 
@@ -147,7 +147,7 @@ ggplot(season[season$PIM>0,],aes(x=PIM,y=reorder(NAME,PIM),fill=col))+
 
 ```
 
-# Leauge statistics
+# League statistics
 
 
 ```{r f2,include=FALSE}
