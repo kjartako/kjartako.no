@@ -311,7 +311,7 @@ for(j in 1:length(teams))
             pendur=test2[2]
             pentype=gsub("[\\(\\)]", "", regmatches(test2[1], gregexpr("\\(.*?\\)", test2[1]))[[1]])
             
-            pendata=rbind(pendata,c(teams[j],homeaway,h,pentime,pendur,pentype))
+            pendata=rbind(pendata,c(teams_displaynames[j],homeaway,h,pentime,pendur,pentype))
           }
         }
       }
