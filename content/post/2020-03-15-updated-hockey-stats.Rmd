@@ -451,6 +451,51 @@ refcount$Team = factor(refcount$Team, levels = rev(teams))
 ######################################################################################
 ######################################################################################
 ######################################################################################
+# REFEREES PENALTIES
+######################################################################################
+######################################################################################
+######################################################################################
+PenaltyMatch = data.frame(matrix(0,nrow=N,ncol=2))
+colnames(PenaltyMatch)=c("2 min","10 min")
+
+for(i in 1:N)
+{
+  plist=list(MATCHLIST[[i]]$pen1,MATCHLIST[[i]]$pen2,MATCHLIST[[i]]$pen3)
+  
+  for(h in 1:3)
+  {
+    for(k in 1:nrow(plist[[h]]))
+    {
+      test=strsplit(strsplit(plist[[h]][k,], "\r\n")[[1]][3], ", ")[[1]][2]
+      
+      if(!is.na(test))
+      {
+        if(test == "2 min")
+        {
+          PenaltyMatch[i,1]=PenaltyMatch[i,1]+1
+        }else if(test == "10 min")
+        {
+          PenaltyMatch[i,2]=PenaltyMatch[i,2]+1
+        }
+      }
+    }
+  }
+}
+
+PenaltyMatchCopy=PenaltyMatch
+PenaltyMatch$Ref = refs[,1]
+PenaltyMatchCopy$Ref = refs[,2]
+refpen = rbind(PenaltyMatch,PenaltyMatchCopy)
+
+RefPenDat=refpen[is.element(refpen[,3],toprefs),]
+
+RefPenDat=aggregate(. ~ Ref, RefPenDat, mean)
+RefPenDat=melt(RefPenDat)
+colnames(RefPenDat)=c("Referee","Penalty","Count")
+RefPenDat$Penalty = factor(RefPenDat$Penalty, levels = c("2 min","10 min"))
+######################################################################################
+######################################################################################
+######################################################################################
 # TIME ON ICE
 ######################################################################################
 ######################################################################################
@@ -580,7 +625,21 @@ ggplot() + geom_bar(aes(y = Count/2, x = reorder(Referee,Count), fill = Team),co
 <br/>
 <br/>
 
-```{r fig7-2, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 8}
+```{r fig7-2, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 7}
+ggplot() + geom_bar(aes(y = Count, x = reorder(Referee,Count), fill = Penalty),colour="black",width=.8,alpha=.8, data = RefPenDat,stat="identity")+
+  coord_flip()+scale_y_continuous(position = "right")+theme_bw()+
+  scale_fill_brewer(palette="Paired",breaks=c("10 min","2 min"),labels=c("10 min","2 min"))+
+  theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
+  theme(legend.position="top",legend.title=element_blank(),legend.text=element_text(size=12),axis.title.y = element_blank())+
+  ylab("Average penalties per match")+theme(axis.text.x=element_text(size=18),axis.text.y=element_text(size=14),axis.title=element_text(size=16,face="bold"))+
+  theme(panel.border = element_blank(),axis.line = element_line(colour = "grey"))
+```
+
+
+<br/>
+<br/>
+
+```{r fig8-2, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 8}
 ggplot() + geom_bar(aes(y = Val, x = reorder(Team, Maxval), fill = Type),colour="black",width=.8,alpha=.8, data = TOItop,stat="identity", position="dodge")+
   coord_flip()+scale_y_continuous(position = "right")+theme_bw()+scale_fill_brewer(palette="Paired",breaks=c("G1","G2","G3","G4"),labels=c("Top 5 players","6-10","11-15","16-20"))+
   theme(panel.grid.minor.y=element_blank(),panel.grid.major.y=element_blank())+
