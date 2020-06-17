@@ -60,7 +60,7 @@ enableGitInfo = false
   organizations = [ { name = "University of Stavanger", url = "https://www.uis.no/article.php?articleID=108209&categoryID=11198" } ]
 
   gravatar = false  # Get your avatar from Gravatar.com? (true/false)
-  avatar = "portrait.png"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
+  avatar = "portrait.jpg"  # Specify an avatar image (in `static/img/` folder) or delete value to disable avatar.
 
   # Details for the Contact Widget
   email = ""
