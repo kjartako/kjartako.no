@@ -10,10 +10,10 @@ weight = 5
 # List your academic interests.
 [interests]
   interests = [
-	"Computational statistics",
-	"Bayesian inference",
-	"Latent variable models",
-	"Econometrics"
+	"Golf",
+	"Technology",
+	"Ice hockey",
+	"Board games"
   ]
 
 # List your qualifications (such as academic degrees).
