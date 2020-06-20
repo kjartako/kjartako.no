@@ -34,7 +34,7 @@ weight = 5
 
 # Biography
 
-I currently work as a data analyst at [Helse Vest RHF](https://helse-vest.no/en)(the Western Norway Regional Health Authority).
+I currently work as a data analyst at [Helse Vest RHF](https://helse-vest.no/en) (the Western Norway Regional Health Authority).
 
 I have a PhD in computational statistics from the [University of Stavanger](https://www.uis.no/?lang=en_GB). My research mainly focused on latent variable models, using various MCMC techniques for Bayesian inference.
 
