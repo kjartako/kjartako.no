@@ -20,17 +20,23 @@ date_format = "January 2006"
 #   Begin/end multi-line descriptions with 3 quotes `"""`.
 
 [[experience]]
-  title = "PhD Student"
+  title = "Data analyst"
+  company = "Helse Vest RHF"
+  company_url = ""
+  location = "Stavanger"
+  date_start = "2020-01-06"
+  date_end = ""
+  description = ""
+
+[[experience]]
+  title = "PhD Student in Computational Statistics"
   company = "University of Stavanger"
   company_url = ""
   location = "Stavanger"
   date_start = "2016-08-01"
-  date_end = ""
+  date_end = "2020-06-10"
   description = """
-  Research areas:
-  
-  * Bayesian inference for non-linear dynamic econometric models.
-  * Hamiltonian Monte Carlo
+  Thesis title: Essays in statistics and econometrics
   """
   
 [[experience]]
@@ -39,7 +45,7 @@ date_format = "January 2006"
   company_url = ""
   location = "Stavanger"
   date_start = "2016-08-01"
-  date_end = ""
+  date_end = "2019-12-20"
   description = """
   
   * STA100: Probability and Statistics 1
