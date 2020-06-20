@@ -9,7 +9,7 @@ weight = 5
 
 # List your academic interests.
 [interests]
-  interests = [
+  academic interests = [
 	"Computational statistics",
 	"Bayesian inference",
 	"Latent variable models",
@@ -18,7 +18,7 @@ weight = 5
 
 # List your qualifications (such as academic degrees).
 [[education.courses]]
-  course = "PhD in Statistics"
+  course = "PhD in Computational Statistics"
   institution = "University of Stavanger"
   year = 2020
 
