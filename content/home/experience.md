@@ -49,7 +49,7 @@ date_format = "January 2006"
   description = """
   
   * STA100: Probability and Statistics 1
-  * STA510: Statistical modeling and simulation
+  * STA510: Statistical modelling and simulation
   """
   
 [[experience]]
