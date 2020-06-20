@@ -34,10 +34,10 @@ weight = 5
 
 # Biography
 
-I currently work as a data analyst at [Helse Vest RHF (the Western Norway Regional Health Authority)](https://helse-vest.no/en).
+I currently work as a data analyst at [Helse Vest RHF](https://helse-vest.no/en)(the Western Norway Regional Health Authority).
 
 I have a PhD in computational statistics from the [University of Stavanger](https://www.uis.no/?lang=en_GB). My research mainly focused on latent variable models, using various MCMC techniques for Bayesian inference.
 
-The thesis combines mathematical statistics and programming ([R]( https://www.r-project.org/), C++([Rcpp](http://www.rcpp.org/)) and [Stan](https://mc-stan.org/users/interfaces/rstan)). Applications include modelling of commodity prices and credit risk in the banking sector. The thesis explores which statistical methods that are best suited for dealing with non-linear models with unobservable variables, and how to best fit such models to observed data, by developing new estimation methodology.
+The thesis combines mathematical statistics and programming ([R]( https://www.r-project.org/), [C++](http://www.rcpp.org/), [Stan](https://mc-stan.org/users/interfaces/rstan)). Applications include modelling of commodity prices and credit risk in the banking sector. The thesis explores which statistical methods that are best suited for dealing with non-linear models with unobservable variables, and how to best fit such models to observed data, by developing new estimation methodology.
 
 The performance of both existing methods and the proposed original methodology have been investigated through applications to economic time series data. Based on observed data, the methods provide information on interesting economic quantities that are not directly observable.
