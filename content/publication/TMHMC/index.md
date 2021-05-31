@@ -18,8 +18,8 @@ authors = ["Kjartan Kloster Osmundsen", "Tore Selland Kleppe", "Roman Liesenfeld
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "*Journal of Computational and Graphical Statistics*, 1-32."
-publication_short = "*Journal of Computational and Graphical Statistics*, 1-32."
+publication = "*Journal of Computational and Graphical Statistics*, 1-32"
+publication_short = "*Journal of Computational and Graphical Statistics*, 1-32"
 
 # Abstract and optional shortened version.
 abstract = "We propose an importance sampling (IS)-based transport map Hamiltonian Monte Carlo procedure for performing a Bayesian analysis in nonlinear high-dimensional hierarchical models. Using IS techniques to construct a transport map, the proposed method transforms the typically highly complex posterior distribution of a hierarchical model such that it can be easily sampled using standard Hamiltonian Monte Carlo. In contrast to standard applications of high-dimensional IS, our approach does not require IS distributions with high fidelity, which makes it computationally very cheap. Moreover, it is less prone to the notorious problem of IS that the variance of IS weights can become infinite. We illustrate our algorithm with applications to challenging dynamic state-space models, where it exhibits very high simulation efficiency compared to relevant benchmarks, even for variants of the proposed method implemented using a few dozen lines of code in the Stan statistical software. The paper is accompanied by supplementary material containing further details, and the computer code is available at https://github.com/kjartako/TMHMC."
