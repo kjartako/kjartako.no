@@ -1,6 +1,6 @@
 +++
 title = "Importance Sampling-based Transport Map Hamiltonian Monte Carlo for Bayesian Hierarchical Models"
-date = 2021-5-3
+date = 2021-05-03
 draft = false
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
