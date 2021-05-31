@@ -1,6 +1,6 @@
 +++
 title = "Importance Sampling-based Transport Map Hamiltonian Monte Carlo for Bayesian Hierarchical Models"
-date = 2019-12-10
+date = 2021-5-3
 draft = false
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
@@ -15,14 +15,14 @@ authors = ["Kjartan Kloster Osmundsen", "Tore Selland Kleppe", "Roman Liesenfeld
 # 4 = Report
 # 5 = Book
 # 6 = Book section
-publication_types = ["3"]
+publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "arXiv"
-publication_short = "arXiv"
+publication = "Journal of Computational and Graphical Statistics"
+publication_short = "Journal of Computational and Graphical Statistics"
 
 # Abstract and optional shortened version.
-abstract = "We propose an importance sampling (IS)-based transport map Hamiltonian Monte Carlo procedure for performing full Bayesian analysis in general nonlinear high-dimensional hierarchical models. Using IS techniques to construct a transport map, the proposed method transforms the typically highly challenging target distribution of a hierarchical model into a target which is easily sampled using standard Hamiltonian Monte Carlo. Conventional applications of high-dimensional IS, where infinite variance of IS weights can be a serious problem, require computationally costly high-fidelity IS distributions. An appealing property of our method is that the IS distributions employed can be of rather low fidelity, making it computationally cheap. We illustrate our algorithm in applications to challenging dynamic state-space models, where it exhibits very high simulation efficiency compared to relevant benchmarks, even for variants of the proposed method implemented using a few dozen lines of code in the Stan statistical software."
+abstract = "We propose an importance sampling (IS)-based transport map Hamiltonian Monte Carlo procedure for performing a Bayesian analysis in nonlinear high-dimensional hierarchical models. Using IS techniques to construct a transport map, the proposed method transforms the typically highly complex posterior distribution of a hierarchical model such that it can be easily sampled using standard Hamiltonian Monte Carlo. In contrast to standard applications of high-dimensional IS, our approach does not require IS distributions with high fidelity, which makes it computationally very cheap. Moreover, it is less prone to the notorious problem of IS that the variance of IS weights can become infinite. We illustrate our algorithm with applications to challenging dynamic state-space models, where it exhibits very high simulation efficiency compared to relevant benchmarks, even for variants of the proposed method implemented using a few dozen lines of code in the Stan statistical software. The paper is accompanied by supplementary material containing further details, and the computer code is available at https://github.com/kjartako/TMHMC."
 #abstract_short = ""
 
 # Is this a selected publication? (true/false)
