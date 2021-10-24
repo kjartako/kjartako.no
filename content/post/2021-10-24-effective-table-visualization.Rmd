@@ -1,0 +1,100 @@
+---
+title: 'Effective table visualization for KPI range comparisons'
+author: Kjartan Kloster Osmundsen
+date: '2021-10-24'
+slug: effective-table-visualization
+categories:
+  - Visualization
+  - R
+tags: []
+image:
+  caption: ''
+  focal_point: ''
+---
+
+I was asked to visualize a set of quarterly KPIs for different companies. The main ask was to make a clear comparison between the companies, with respect to the *range* of the KPIs.
+
+Given the fairly high number of KPIs, I ended up going for a tabular approach, with small horizontal bullet graphs inside each table cell, using the [Sparkline](https://cran.r-project.org/web/packages/sparkline/README.html) package in R.
+However, I quickly experiences that it was not straightforward to place *Sparkline* objects inside table cells. I finally discovered the wonderful [Reactable](https://glin.github.io/reactable/) package, that made it all quite manageable. 
+
+# The result
+
+The following table shows the resulting data visualization, with sample data. Each KPI is a percentage value.
+Each bullet graph corresponds to a whole year, for a given combination of company and KPI. The dark blue part of the bar show the KPI's range (spans from worst to best quarterly value that year). The vertical black line is the KPI target value, here set to 70 %.
+
+Thus, each bullet graph show the KPI's quarterly range for each single company. If you look at a whole column at once, you can easily see how the KPI's range (and level!) varies between companies.
+
+The R code is available [here](https://github.com/kjartako/R-visualizations/blob/main/Bullet_sparkline_table.R).
+
+```{r f,include=FALSE}
+library(widgetframe)
+library(reactable)
+library(sparkline)
+library(stringr)
+library(dplyr)
+
+KPI_target=0.7
+lab_company=c("Company A","Company B","Company C","Company D")
+lab_KPI=c("KPI 1","KPI 2","KPI 3","KPI 4","KPI 5","KPI 6")
+lab_Q=c("Q1, 2019","Q2, 2019","Q3, 2019","Q4, 2019","Q1, 2020","Q2, 2020","Q3, 2020","Q4, 2020")
+
+# Sample example data
+set.seed(123)
+n=length(lab_company)*length(lab_KPI)*length(lab_Q)
+dat = as.data.frame(cbind(Company=rep(lab_company,each=n/length(lab_company)),KPI=rep(lab_KPI,n/length(lab_KPI)),Q=rep(lab_Q,each=length(lab_KPI))))
+dat$Year=str_sub(dat$Q, start= -4)
+dat$Value=runif(n,min=0.3)
+
+# Find worst and best quarter each year for every combination of company and KPI
+tabdat=dat%>%group_by(Company,KPI,Year) %>% summarize(Min = min(Value),Max = max(Value))
+
+colWidth = c(150,50,rep(120,length(lab_KPI)))
+yearvec = unique(dat$Year)
+
+col_list=list()
+dat_years = data.frame(rep(lab_company,each=length(yearvec)),rep(yearvec,length(lab_company)))
+
+col_list[[1]]=colDef(align="left", width=colWidth[1],
+                     style = JS("function(rowInfo, colInfo, state) {
+        var firstSorted = state.sorted[0]
+        if (!firstSorted || firstSorted.id === 'Company') {
+          var prevRow = state.pageRows[rowInfo.viewIndex - 1]
+          if (prevRow && rowInfo.row['Company'] === prevRow['Company']) {
+            return { visibility: 'hidden' }
+          }
+        }
+      }"))
+col_list[[2]]=colDef(align="center", width=colWidth[2])
+
+for(i in 1:length(lab_KPI))
+{
+  tmplist=list()
+  for(j in 1:length(lab_company))
+  {
+    for(k in 1:length(yearvec))
+    {
+      tmp = tabdat[tabdat$KPI==lab_KPI[i] & tabdat$Company==lab_company[j] & tabdat$Year==yearvec[k],]
+      tmplist[[(j-1)*length(yearvec)+k]]=c(KPI_target,0,1,tmp$Max,tmp$Min)  
+    }
+  }
+  
+  dat_years[[i+2]]=tmplist
+  
+  col_list[[i+2]]=colDef(align="center", width=colWidth[i+2], cell = function(values) {
+    sparkline(values,type="bullet",targetWidth=1.5,targetColor="black",performanceColor="white",rangeColors=c("GhostWhite","RoyalBlue","GhostWhite"))
+  })
+}
+
+colnames(dat_years)=names(col_list)=c("Company","Year",lab_KPI)
+
+```
+
+```{r fig1, eval=TRUE,echo=FALSE,fig.width = 10, fig.height = 6}
+
+res=reactable(dat_years, columns = col_list, bordered = TRUE, sortable=FALSE, width = sum(colWidth)+2, defaultPageSize = nrow(dat_years),
+          rowStyle = function(index){if (index%%length(yearvec)==0) list(boxShadow= "inset 0 -2px 0 rgba(0, 0, 0, 1)")
+            else if (index==1) list(boxShadow= "inset 0 2px 0 rgba(0, 0, 0, 1)")})
+
+widgetframe::frameWidget(res)
+
+```

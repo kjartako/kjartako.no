@@ -1,0 +1,32 @@
+---
+title: 'Effective table visualization for KPI range comparisons'
+author: Kjartan Kloster Osmundsen
+date: '2021-10-24'
+slug: effective-table-visualization
+categories:
+  - Visualization
+  - R
+tags: []
+image:
+  caption: ''
+  focal_point: ''
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/pymjs/pym.v1.js"></script>
+<script src="/rmarkdown-libs/widgetframe-binding/widgetframe.js"></script>
+
+
+<p>I was asked to visualize a set of quarterly KPIs for different companies. The main ask was to make a clear comparison between the companies, with respect to the <em>range</em> of the KPIs.</p>
+<p>Given the fairly high number of KPIs, I ended up going for a tabular approach, with small horizontal bullet graphs inside each table cell, using the <a href="https://cran.r-project.org/web/packages/sparkline/README.html">Sparkline</a> package in R.
+However, I quickly experiences that it was not straightforward to place <em>Sparkline</em> objects inside table cells. I finally discovered the wonderful <a href="https://glin.github.io/reactable/">Reactable</a> package, that made it all quite manageable.</p>
+<div id="the-result" class="section level1">
+<h1>The result</h1>
+<p>The following table shows the resulting data visualization, with sample data. Each KPI is a percentage value.
+Each bullet graph corresponds to a whole year, for a given combination of company and KPI. The dark blue part of the bar show the KPI’s range (spans from worst to best quarterly value that year). The vertical black line is the KPI target value, here set to 70 %.</p>
+<p>Thus, each bullet graph show the KPI’s quarterly range for each single company. If you look at a whole column at once, you can easily see how the KPI’s range (and level!) varies between companies.</p>
+<p>The R code is available <a href="https://github.com/kjartako/R-visualizations/blob/main/Bullet_sparkline_table.R">here</a>.</p>
+<div id="htmlwidget-1" style="width:100%;height:auto;" class="widgetframe html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"url":"/post/2021-10-24-effective-table-visualization_files/figure-html//widgets/widget_fig1.html","options":{"xdomain":"*","allowfullscreen":false,"lazyload":false}},"evals":[],"jsHooks":[]}</script>
+</div>
