@@ -49,8 +49,8 @@ slides = ""
 tags = []
 
 # Links (optional).
-url_pdf = ""
-url_preprint = "https://arxiv.org/pdf/1812.07929.pdf"
+url_pdf = "https://www.tandfonline.com/doi/full/10.1080/10618600.2021.1923519"
+url_preprint = ""
 url_code = "https://github.com/kjartako/TMHMC"
 url_dataset = ""
 url_project = ""
