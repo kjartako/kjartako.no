@@ -12,8 +12,7 @@ time_end = 2020-06-10T14:30:00
 authors = []
 
 # Abstract and optional shortened version.
-abstract = "This thesis mainly considers non-linear cases of a latent variable model class called state-space models. The main objective is Bayesian inference for all model parameters, based on the information in the observed data. The presented work considers the existing methods for dealing with latent variables, and propose modifications to some of the most promising methods. The performance of the proposed methods is investigated through applications on economic time series data.
-The thesis also includes research of a more applied nature, where an existing economic model for commodity prices is extended with a stochastic trend, to obtain a state-space model. It also contains applied economic research outside the latent variable domain, where different risk measures are compared in the context of credit risk regulation."
+abstract = "This thesis mainly considers non-linear cases of a latent variable model class called state-space models. The main objective is Bayesian inference for all model parameters, based on the information in the observed data. The presented work considers the existing methods for dealing with latent variables, and propose modifications to some of the most promising methods. The performance of the proposed methods is investigated through applications on economic time series data. The thesis also includes research of a more applied nature, where an existing economic model for commodity prices is extended with a stochastic trend, to obtain a state-space model. It also contains applied economic research outside the latent variable domain, where different risk measures are compared in the context of credit risk regulation."
 abstract_short = "Digital doctoral defence, University of Stavanger."
 
 # Name of event and optional event URL.
