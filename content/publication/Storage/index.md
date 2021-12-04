@@ -18,8 +18,8 @@ authors = ["Kjartan Kloster Osmundsen", "Tore Selland Kleppe", "Roman Liesenfeld
 publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "Econometrics, 9(4), 40."
-publication_short = "Econometrics, 9(4), 40."
+publication = "Econometrics, 9(4), 40"
+publication_short = "Econometrics, 9(4), 40"
 
 # Abstract and optional shortened version.
 abstract = "We propose a State-Space Model (SSM) for commodity prices that combines the competitive storage model with a stochastic trend. This approach fits into the economic rationality of storage decisions and adds to previous deterministic trend specifications of the storage model. For a Bayesian posterior analysis of the SSM, which is nonlinear in the latent states, we used a Markov chain Monte Carlo algorithm based on the particle marginal Metropolis–Hastings approach. An empirical application to four commodity markets showed that the stochastic trend SSM is favored over deterministic trend specifications. The stochastic trend SSM identifies structural parameters that differ from those for deterministic trend specifications. In particular, the estimated price elasticities of demand are typically larger under the stochastic trend SSM"
