@@ -47,7 +47,7 @@ slides = ""
 
 # Links (optional).
 url_pdf = ""
-url_slides = "talk/trail_lecture/slides.pdf"
+url_slides = "talk/trial_lecture/slides.pdf"
 url_video = ""
 url_code = ""
 
