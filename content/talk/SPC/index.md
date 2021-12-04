@@ -13,7 +13,7 @@ authors = []
 
 # Abstract and optional shortened version.
 abstract = "Hva er statistisk prosesskontroll? Hva er en referanseperiode? Seriediagram og kontrolldiagram. Hvordan velge rett type diagram? Praktisk bruk ved hjelp av Excel-maler."
-abstract_short = "Foredrag på forbedringsutdanning, Clarion Hotel Air, Sola."
+abstract_short = "Foredrag på regional forbedringsutdanning."
 
 # Name of event and optional event URL.
 event = "Samling regional forbedringsutdanning"
