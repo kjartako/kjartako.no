@@ -49,7 +49,7 @@ slides = ""
 tags = []
 
 # Links (optional).
-url_pdf = ""
+url_pdf = "https://www.sciencedirect.com/science/article/abs/pii/S1042443117305917"
 url_preprint = ""
 url_code = ""
 url_dataset = ""
@@ -64,7 +64,7 @@ url_source = ""
 # url_custom = [{name = "Custom Link", url = "http://example.org"}]
 
 # Digital Object Identifier (DOI)
-doi = "10.1016/j.intfin.2018.07.001"
+doi = ""
 
 # Does this page contain LaTeX math? (true/false)
 math = false
