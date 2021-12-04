@@ -12,7 +12,7 @@ time_end = 2020-06-10T10:45:00
 authors = []
 
 # Abstract and optional shortened version.
-abstract = "The structural parameters of the competitive storage model with stochastic trend, completely bounded storage and i.i.d. supply shocks are estimated using particle Markov chain Monte Carlo, relying only on price data."
+abstract = "In 1996, Propp and Wilson showed how MCMC algorithms can be modified so that they deliver exact draws from the Markov chains' equilibrium distribution. This type of sampling is referred to as perfect simulation. Perfect sampling determines automatically how long the Markov chain must run to reach the exact equilibrium distribution."
 abstract_short = "Digital trial lecture, University of Stavanger."
 
 # Name of event and optional event URL.
