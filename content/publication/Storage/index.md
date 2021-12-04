@@ -1,6 +1,6 @@
 +++
 title = "Estimating the Competitive Storage Model with Stochastic Trends in Commodity Prices"
-date = 2020-01-12
+date = 2021-11-05
 draft = false
 
 # Authors. Comma separated list, e.g. `["Bob Smith", "David Jones"]`.
@@ -15,14 +15,14 @@ authors = ["Kjartan Kloster Osmundsen", "Tore Selland Kleppe", "Roman Liesenfeld
 # 4 = Report
 # 5 = Book
 # 6 = Book section
-publication_types = ["3"]
+publication_types = ["2"]
 
 # Publication name and optional abbreviated version.
-publication = "arXiv"
-publication_short = "arXiv"
+publication = "Econometrics, 9(4), 40."
+publication_short = "Econometrics, 9(4), 40."
 
 # Abstract and optional shortened version.
-abstract = "We propose a state-space model (SSM) for commodity prices that combines the competitive storage model with a stochastic trend. This approach fits into the economic rationality of storage decisions, and adds to previous deterministic trend specifications of the storage model. Parameters are estimated using a particle Markov chain Monte Carlo procedure. Empirical application to four commodity markets shows that the stochastic trend SSM is favored over deterministic trend specifications. The stochastic trend SSM identifies structural parameters that differ from those for deterministic trend specifications. In particular, the estimated price elasticities of demand are significantly larger under the stochastic trend SSM."
+abstract = "We propose a State-Space Model (SSM) for commodity prices that combines the competitive storage model with a stochastic trend. This approach fits into the economic rationality of storage decisions and adds to previous deterministic trend specifications of the storage model. For a Bayesian posterior analysis of the SSM, which is nonlinear in the latent states, we used a Markov chain Monte Carlo algorithm based on the particle marginal Metropolis–Hastings approach. An empirical application to four commodity markets showed that the stochastic trend SSM is favored over deterministic trend specifications. The stochastic trend SSM identifies structural parameters that differ from those for deterministic trend specifications. In particular, the estimated price elasticities of demand are typically larger under the stochastic trend SSM"
 #abstract_short = ""
 
 # Is this a selected publication? (true/false)
@@ -49,8 +49,8 @@ slides = ""
 tags = []
 
 # Links (optional).
-url_pdf = ""
-url_preprint = "https://arxiv.org/pdf/2001.03984.pdf"
+url_pdf = "https://www.mdpi.com/2225-1146/9/4/40"
+url_preprint = ""
 url_code = ""
 url_dataset = ""
 url_project = ""
