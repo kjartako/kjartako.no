@@ -16,7 +16,7 @@ abstract = "In 1996, Propp and Wilson showed how MCMC algorithms can be modified
 abstract_short = "Digital trial lecture, University of Stavanger."
 
 # Name of event and optional event URL.
-event = "Doctoral defence, trial lecture"
+event = "Doctoral defence"
 event_url = "https://www.uis.no/nb/hvordan-beregne-ravarepriser"
 
 # Location of event.
