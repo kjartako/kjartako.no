@@ -49,7 +49,7 @@ slides = ""
 tags = []
 
 # Links (optional).
-url_pdf = ""
+url_pdf = "https://www.tandfonline.com/doi/abs/10.1080/03610918.2019.1565580"
 url_preprint = ""
 url_code = "https://github.com/kjartako/MS_VAR"
 url_dataset = ""
@@ -64,7 +64,7 @@ url_source = ""
 # url_custom = [{name = "Custom Link", url = "http://example.org"}]
 
 # Digital Object Identifier (DOI)
-doi = "10.1080/03610918.2019.1565580"
+doi = ""
 
 # Does this page contain LaTeX math? (true/false)
 math = false
